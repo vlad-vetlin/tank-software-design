@@ -82,10 +82,21 @@ public final class GdxGameUtils {
                 .setHeight(region.getRegionHeight());
     }
 
+    /**
+     * @param previousProgress
+     * @param deltaTime
+     * @param speed
+     * @return
+     */
     public static float continueProgress(float previousProgress, float deltaTime, float speed) {
         return clamp(previousProgress + deltaTime / speed, 0f, 1f);
     }
 
+    /**
+     * @param tileLayer - class with information about tiles
+     * @param tileCoordinates - 2d Coordinates. number of tile in x and y
+     * @return 2d coordinates of the tile center
+     */
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
         int tileWidth = tileLayer.getTileWidth();
         int tileHeight = tileLayer.getTileHeight();
