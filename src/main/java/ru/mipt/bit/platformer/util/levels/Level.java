@@ -16,7 +16,9 @@ import ru.mipt.bit.platformer.util.ICanBeRendered;
 import ru.mipt.bit.platformer.util.ICanMove;
 import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.obstacles.AbstractObstacle;
+import ru.mipt.bit.platformer.util.obstacles.IObstacleFactory;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
+import ru.mipt.bit.platformer.util.obstacles.TreeObstacleFactory;
 import ru.mipt.bit.platformer.util.players.AbstractPlayer;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
@@ -58,20 +60,18 @@ public class Level implements ICanBeRendered, Disposable {
                 new TileMovement(groundLayer, Interpolation.smooth)
         );
 
-        AbstractObstacle obstacle = new Tree(
-                batch,
-                new Texture("images/greenTree.png"),
-                groundLayer,
-                new GridPoint2(1, 3)
-        );
+        IObstacleFactory treeFactory = TreeObstacleFactory.getInstance();
+        treeFactory.setBatch(batch);
+        treeFactory.setGround(groundLayer);
+        treeFactory.setTexturePath("images/greenTree.png");
 
         player.setMoveStrategy(new SimpleMoveStrategy(map));
 
         map.addPlayer(player);
-        map.addObstacle(obstacle);
+        map.addObstacle(treeFactory.createObstacle(new GridPoint2(1, 3)));
+        map.addObstacle(treeFactory.createObstacle(new GridPoint2(2, 5)));
     }
 
-    // TODO возможно добавить класс основного игрока, ибо он всегда должен реализовывать интерфейс ICanMove
     public AbstractPlayer getPlayer() {
         return map.getPlayer();
     }
