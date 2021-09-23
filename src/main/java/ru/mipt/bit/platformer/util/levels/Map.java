@@ -8,10 +8,10 @@ import ru.mipt.bit.platformer.util.players.AbstractPlayer;
 
 import java.util.ArrayList;
 
-public class Map implements ICanBeRendered, Disposable {
+public final class Map implements ICanBeRendered, Disposable {
     private AbstractPlayer player;
 
-    private ArrayList<AbstractObstacle> obstacles;
+    private final ArrayList<AbstractObstacle> obstacles;
 
     public Map() {
         obstacles = new ArrayList<>();

@@ -23,6 +23,7 @@ public abstract class AbstractTexturedObject implements ICanBeRendered, Disposab
     }
 
     public void render() {
+        // 0f - default rotation. If class have rotation, then it should Override this method
         drawTextureRegionUnscaled(batch, graphics, rectangle, 0f);
     }
 

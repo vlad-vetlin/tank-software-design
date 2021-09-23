@@ -82,12 +82,6 @@ public final class GdxGameUtils {
                 .setHeight(region.getRegionHeight());
     }
 
-    /**
-     * @param previousProgress
-     * @param deltaTime
-     * @param speed
-     * @return
-     */
     public static float continueProgress(float previousProgress, float deltaTime, float speed) {
         return clamp(previousProgress + deltaTime / speed, 0f, 1f);
     }

@@ -11,4 +11,6 @@ public interface IMoveStrategy {
     void moveRight(ICanMove player);
 
     void moveDown(ICanMove player);
+
+    void processMoveToDestination(ICanMove player, float deltaTime, float speed);
 }

@@ -3,7 +3,6 @@ package ru.mipt.bit.platformer.util.players;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.AbstractTexturedObject;
 import ru.mipt.bit.platformer.util.ICanMove;
 import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.players.moveStrategies.IMoveStrategy;
@@ -11,18 +10,16 @@ import ru.mipt.bit.platformer.util.players.moveStrategies.IMoveStrategy;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
 
-public class TankPlayer extends AbstractPlayer implements ICanMove {
-    // which tile the player want to go next (rotation)
+public final class TankPlayer extends AbstractPlayer implements ICanMove {
     private GridPoint2 destinationCoordinates;
 
     private float rotation;
 
     private IMoveStrategy moveStrategy;
 
-    // player current position coordinates on level 10x8 grid (e.g. x=0, y=1)
     private float movementProgress = 1f;
 
-    private TileMovement tileMovement;
+    private final TileMovement tileMovement;
 
     public TankPlayer(Batch batch, Texture texture, GridPoint2 coordinates, TileMovement tileMovement) {
         super(batch, texture, coordinates);
@@ -34,6 +31,11 @@ public class TankPlayer extends AbstractPlayer implements ICanMove {
 
     public void setMoveStrategy(IMoveStrategy strategy) {
         moveStrategy = strategy;
+    }
+
+    @Override
+    public void processMoveToDestination(float deltaTime, float speed) {
+        moveStrategy.processMoveToDestination(this, deltaTime, speed);
     }
 
     @Override
@@ -64,11 +66,6 @@ public class TankPlayer extends AbstractPlayer implements ICanMove {
     @Override
     public void setDestinationCoordinates(GridPoint2 point) {
         destinationCoordinates = point;
-    }
-
-    @Override
-    public void setCoordinates(GridPoint2 point) {
-        this.coordinates = point;
     }
 
     @Override

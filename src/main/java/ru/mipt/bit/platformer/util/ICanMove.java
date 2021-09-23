@@ -27,4 +27,6 @@ public interface ICanMove {
     void setRotation(float rotation);
 
     void setMoveStrategy(IMoveStrategy strategy);
+
+    void processMoveToDestination(float deltaTime, float speed);
 }

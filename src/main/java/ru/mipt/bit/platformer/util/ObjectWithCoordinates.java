@@ -15,4 +15,8 @@ public abstract class ObjectWithCoordinates extends AbstractTexturedObject {
     public GridPoint2 getCoordinates() {
         return coordinates;
     }
+
+    public void setCoordinates(GridPoint2 point) {
+        this.coordinates = point;
+    }
 }

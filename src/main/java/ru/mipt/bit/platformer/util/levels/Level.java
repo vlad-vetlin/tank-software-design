@@ -3,73 +3,73 @@ package ru.mipt.bit.platformer.util.levels;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.util.ICanBeRendered;
-import ru.mipt.bit.platformer.util.ICanMove;
 import ru.mipt.bit.platformer.util.TileMovement;
-import ru.mipt.bit.platformer.util.obstacles.AbstractObstacle;
 import ru.mipt.bit.platformer.util.obstacles.IObstacleFactory;
-import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.obstacles.TreeObstacleFactory;
 import ru.mipt.bit.platformer.util.players.AbstractPlayer;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
-public class Level implements ICanBeRendered, Disposable {
-    private Batch batch;
+public final class Level implements ICanBeRendered, Disposable {
+    private final Batch batch;
+    private final MapRenderer renderer;
+    private final TiledMapTileLayer groundLayer;
 
-    private TiledMap levelMap;
-    private MapRenderer renderer;
-
-    private TiledMapTileLayer groundLayer;
+    private final GridPoint2 PLAYER_START_POSITION = new GridPoint2(1, 1);
 
     Map map;
 
-    public TiledMapTileLayer getGroundLayer() {
-        return groundLayer;
+    AbstractPlayer createPlayer() {
+        AbstractPlayer player = new TankPlayer(
+                batch,
+                new Texture("images/tank_blue.png"),
+                PLAYER_START_POSITION,
+                new TileMovement(groundLayer, Interpolation.smooth)
+        );
+        player.setMoveStrategy(new SimpleMoveStrategy(map));
+
+        return player;
+    }
+
+    IObstacleFactory createObstacleFactory() {
+        IObstacleFactory treeFactory = TreeObstacleFactory.getInstance();
+        treeFactory.setBatch(batch);
+        treeFactory.setGround(groundLayer);
+        treeFactory.setTexturePath("images/greenTree.png");
+
+        return treeFactory;
+    }
+
+    private void initMap() {
+        map = new Map();
+
+        AbstractPlayer player = createPlayer();
+        IObstacleFactory treeFactory = createObstacleFactory();
+
+        map.addPlayer(player);
+        map.addObstacle(treeFactory.createObstacle(new GridPoint2(1, 3)));
+        map.addObstacle(treeFactory.createObstacle(new GridPoint2(2, 5)));
     }
 
     public Level() {
         batch = new SpriteBatch();
 
         // load level tiles
-        levelMap = new TmxMapLoader().load("level.tmx");
-        // create renderer for map
+        TiledMap levelMap = new TmxMapLoader().load("level.tmx");
         renderer = createSingleLayerMapRenderer(levelMap, batch);
-
-        // create ground
         groundLayer = getSingleLayer(levelMap);
 
-        map = new Map();
-
-        AbstractPlayer player = new TankPlayer(
-                batch,
-                new Texture("images/tank_blue.png"),
-                new GridPoint2(1, 1),
-                new TileMovement(groundLayer, Interpolation.smooth)
-        );
-
-        IObstacleFactory treeFactory = TreeObstacleFactory.getInstance();
-        treeFactory.setBatch(batch);
-        treeFactory.setGround(groundLayer);
-        treeFactory.setTexturePath("images/greenTree.png");
-
-        player.setMoveStrategy(new SimpleMoveStrategy(map));
-
-        map.addPlayer(player);
-        map.addObstacle(treeFactory.createObstacle(new GridPoint2(1, 3)));
-        map.addObstacle(treeFactory.createObstacle(new GridPoint2(2, 5)));
+        initMap();
     }
 
     public AbstractPlayer getPlayer() {
@@ -85,7 +85,6 @@ public class Level implements ICanBeRendered, Disposable {
 
         map.render();
 
-
         // submit all drawing requests
         batch.end();
     }
@@ -94,5 +93,9 @@ public class Level implements ICanBeRendered, Disposable {
     public void dispose() {
         map.dispose();
         batch.dispose();
+    }
+
+    public void processMoveToDestination(float deltaTime, float speed) {
+        map.getPlayer().processMoveToDestination(deltaTime, speed);
     }
 }

@@ -36,15 +36,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         level = new Level();
     }
 
-    @Override
-    public void render() {
-        // clear the screen
-        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
-        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
-
-        // get time passed since the last render
-        float deltaTime = Gdx.graphics.getDeltaTime();
-
+    private void processKeyPressed() {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             level.getPlayer().moveUp();
         }
@@ -57,13 +49,20 @@ public class GameDesktopLauncher implements ApplicationListener {
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             level.getPlayer().moveRight();
         }
+    }
 
-        float progress = continueProgress(level.getPlayer().getMovementProgress(), deltaTime, MOVEMENT_SPEED);
-        level.getPlayer().setMovementProgress(progress);
-        if (isEqual(progress, 1f)) {
-            // record that the player has reached his/her destination
-            level.getPlayer().setCoordinates(level.getPlayer().getDestinationCoordinates());
-        }
+    @Override
+    public void render() {
+        // clear the screen
+        Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
+        Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+
+        // get time passed since the last render
+        float deltaTime = Gdx.graphics.getDeltaTime();
+
+        processKeyPressed();
+
+        level.processMoveToDestination(deltaTime, MOVEMENT_SPEED);
 
         // render each tile of the level
         level.render();
