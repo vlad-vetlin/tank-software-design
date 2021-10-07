@@ -4,52 +4,33 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Rectangle;
-import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.levels.Level;
+import ru.mipt.bit.platformer.util.views.LevelView;
 
-import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
-    private TileMovement tileMovement;
-
     private Level level;
+
+    private LevelView levelView;
+
+    private GameKeyboardSupporter keyboardSupporter;
 
     @Override
     public void create() {
-        level = new Level();
+        TiledMap levelMap = new TmxMapLoader().load("level.tmx");
+
+        levelView = new LevelView(levelMap);
+        level = new Level(levelMap, levelView.getPlayerRect(), levelView.getObstacleRect());
+
+        keyboardSupporter = new GameKeyboardSupporter(level);
     }
 
-    private void processKeyPressed() {
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            level.getPlayer().moveUp();
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            level.getPlayer().moveLeft();
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            level.getPlayer().moveDown();
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            level.getPlayer().moveRight();
-        }
-    }
 
     @Override
     public void render() {
@@ -60,12 +41,12 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        processKeyPressed();
+        keyboardSupporter.processKey();
 
         level.processMoveToDestination(deltaTime, MOVEMENT_SPEED);
 
         // render each tile of the level
-        level.render();
+        levelView.render(level);
     }
 
     @Override
@@ -86,7 +67,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        level.dispose();
+        levelView.dispose();
     }
 
     public static void main(String[] args) {
