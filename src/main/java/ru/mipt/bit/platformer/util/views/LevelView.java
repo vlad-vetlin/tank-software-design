@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.util.RenderableObject;
@@ -15,31 +16,25 @@ import ru.mipt.bit.platformer.util.players.TankPlayer;
 import java.util.Collection;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class LevelView implements Disposable {
     private final Batch batch;
 
-    private final ObjectWithTextureView tankPlayerView;
+    private final TankPlayerView tankPlayerView;
 
-    private final ObjectWithTextureView treeView;
+    private final TreeView treeView;
 
     private final MapRenderer renderer;
 
     public LevelView(TiledMap levelMap) {
         batch = new SpriteBatch();
 
-        tankPlayerView = new ObjectWithTextureView(batch, new Texture("images/tank_blue.png"));
-        treeView = new ObjectWithTextureView(batch, new Texture("images/greenTree.png"));
+        TiledMapTileLayer groundLayer = getSingleLayer(levelMap);
+        tankPlayerView = new TankPlayerView(batch, new Texture("images/tank_blue.png"), groundLayer);
+        treeView = new TreeView(batch, new Texture("images/greenTree.png"), groundLayer);
 
         renderer = createSingleLayerMapRenderer(levelMap, batch);
-    }
-
-    public Rectangle getObstacleRect() {
-        return treeView.getRectangle();
-    }
-
-    public Rectangle getPlayerRect() {
-        return tankPlayerView.getRectangle();
     }
 
     public void render(Level level) {
@@ -51,9 +46,9 @@ public class LevelView implements Disposable {
         Collection<? extends RenderableObject> renderableObjects = level.getRenderableObjects();
         for (RenderableObject renderableObject : renderableObjects) {
             if (renderableObject instanceof TankPlayer) {
-                tankPlayerView.render(renderableObject);
+                tankPlayerView.render((TankPlayer) renderableObject);
             } else if (renderableObject instanceof Tree) {
-                treeView.render(renderableObject);
+                treeView.render((Tree) renderableObject);
             }
         }
 

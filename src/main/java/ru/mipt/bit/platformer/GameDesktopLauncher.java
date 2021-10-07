@@ -29,9 +29,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMap levelMap = new TmxMapLoader().load("level.tmx");
 
         levelView = new LevelView(levelMap);
-        level = new Level(levelMap);
-        level.addPlayer(levelView.getPlayerRect(), new GridPoint2(1, 1));
-        level.addObstacles(levelView.getObstacleRect(), List.of(
+        level = new Level();
+        level.addPlayer(new GridPoint2(1, 1));
+        level.addObstacles(List.of(
             new GridPoint2(1, 3),
             new GridPoint2(2, 5)
         ));

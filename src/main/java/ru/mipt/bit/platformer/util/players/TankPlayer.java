@@ -1,10 +1,8 @@
 package ru.mipt.bit.platformer.util.players;
 
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Rectangle;
 import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.RenderableObject;
-import ru.mipt.bit.platformer.util.TileMovement;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
@@ -19,20 +17,13 @@ public final class TankPlayer implements Movable, RenderableObject {
 
     private float movementProgress = 1f;
 
-    private final TileMovement tileMovement;
-
-    private final Rectangle rectangle;
-
     private GridPoint2 coordinates;
 
-    public TankPlayer(Rectangle boundingRect, GridPoint2 coordinates, TileMovement tileMovement) {
+    public TankPlayer(GridPoint2 coordinates) {
         this.coordinates = coordinates;
-
-        rectangle = boundingRect;
 
         destinationCoordinates = coordinates;
         rotation = 0f;
-        this.tileMovement = tileMovement;
     }
 
     public void setMoveStrategy(MoveStrategy strategy) {
@@ -51,6 +42,14 @@ public final class TankPlayer implements Movable, RenderableObject {
     @Override
     public GridPoint2 getCoordinates() {
         return coordinates;
+    }
+
+    public GridPoint2 getDestinationCoordinates() {
+        return destinationCoordinates;
+    }
+
+    public float getMovementProgress() {
+        return movementProgress;
     }
 
     private void move(GridPoint2 point) {
@@ -86,12 +85,6 @@ public final class TankPlayer implements Movable, RenderableObject {
     @Override
     public void moveDown() {
         rotateAndMove(decrementedY(coordinates), -90f);
-    }
-
-    @Override
-    public Rectangle getCoordsAsRect() {
-        tileMovement.moveRectangleBetweenTileCenters(rectangle, coordinates, destinationCoordinates, movementProgress);
-        return rectangle;
     }
 
     public float getRotation() {
