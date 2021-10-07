@@ -32,6 +32,7 @@ public final class Tree implements RenderableObject {
         return 0f;
     }
 
+    @Override
     public GridPoint2 getCoordinates() {
         return coordinates;
     }

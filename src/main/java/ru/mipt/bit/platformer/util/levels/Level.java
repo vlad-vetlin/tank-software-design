@@ -13,22 +13,22 @@ import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
 public final class Level {
     private final TiledMapTileLayer groundLayer;
 
-    private final GridPoint2 PLAYER_START_POSITION = new GridPoint2(1, 1);
-
     private TankPlayer player;
 
-    private final ArrayList<Tree> obstacles = new ArrayList<>();
+    private final ArrayList<RenderableObject> obstacles = new ArrayList<>();
 
-    TankPlayer createPlayer(Rectangle rectangle) {
+    private TankPlayer createPlayer(Rectangle rectangle, GridPoint2 position) {
         TankPlayer player = new TankPlayer(
                 rectangle,
-                PLAYER_START_POSITION,
+                position,
                 new TileMovement(groundLayer, Interpolation.smooth)
         );
         player.setMoveStrategy(new SimpleMoveStrategy(this));
@@ -36,18 +36,21 @@ public final class Level {
         return player;
     }
 
-    private void initMap(Rectangle playerRect, Rectangle obstacleRect) {
-        this.player = createPlayer(playerRect);
-
-        this.obstacles.add(new Tree(obstacleRect, groundLayer, new GridPoint2(1, 3)));
-        this.obstacles.add(new Tree(obstacleRect, groundLayer, new GridPoint2(2, 5)));
+    public void addPlayer(Rectangle playerRect, GridPoint2 position) {
+        this.player = createPlayer(playerRect, position);
     }
 
-    public Level(TiledMap levelMap, Rectangle playerRect, Rectangle obstacleRect) {
+    public void addObstacles(Rectangle obstacleRect, Collection<GridPoint2> positions) {
+        this.obstacles.addAll(
+                positions.stream()
+                        .map(position -> new Tree(obstacleRect, groundLayer, position))
+                        .collect(Collectors.toList())
+        );
+    }
+
+    public Level(TiledMap levelMap) {
         // load level tiles
         groundLayer = getSingleLayer(levelMap);
-
-        initMap(playerRect, obstacleRect);
     }
 
     public TankPlayer getPlayer() {
@@ -69,7 +72,7 @@ public final class Level {
 
     public boolean hasObstacle(GridPoint2 point) {
         // obstacle are few, because of it we can use linear algo
-        for (Tree obstacle : obstacles) {
+        for (RenderableObject obstacle : obstacles) {
             if (point.equals(obstacle.getCoordinates())) {
                 return true;
             }

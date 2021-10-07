@@ -6,8 +6,11 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.views.LevelView;
+
+import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -26,7 +29,12 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMap levelMap = new TmxMapLoader().load("level.tmx");
 
         levelView = new LevelView(levelMap);
-        level = new Level(levelMap, levelView.getPlayerRect(), levelView.getObstacleRect());
+        level = new Level(levelMap);
+        level.addPlayer(levelView.getPlayerRect(), new GridPoint2(1, 1));
+        level.addObstacles(levelView.getObstacleRect(), List.of(
+            new GridPoint2(1, 3),
+            new GridPoint2(2, 5)
+        ));
 
         keyboardSupporter = new GameKeyboardSupporter(level);
     }
