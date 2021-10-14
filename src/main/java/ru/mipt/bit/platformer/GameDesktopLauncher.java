@@ -34,12 +34,12 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         levelView = new LevelView(levelMap);
 
-//        LevelGenerator generator = new SimpleRandomGenerator(
-//                new GridPoint2(levelView.getWidth(), levelView.getHeight()),
-//                60
-//        );
+        LevelGenerator generator = new SimpleRandomGenerator(
+                new GridPoint2(levelView.getWidth(), levelView.getHeight()),
+                79
+        );
 
-        LevelGenerator generator = new FileGenerator("src/main/resources/levels/testLevel");
+//        LevelGenerator generator = new FileGenerator("src/main/resources/levels/testLevel");
 
         level = generator.createLevel();
 

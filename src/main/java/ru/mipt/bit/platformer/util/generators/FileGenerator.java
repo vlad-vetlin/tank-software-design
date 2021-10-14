@@ -35,9 +35,13 @@ public class FileGenerator implements LevelGenerator {
                 ++i;
             }
         } catch (FileNotFoundException exception) {
-            System.out.println("File not found");
+            throw new RuntimeException("File not found");
         } catch (IOException ioException) {
-            System.out.println(ioException.getMessage());
+            throw new RuntimeException("IOException");
+        }
+
+        if (playerPosition == null) {
+            throw new RuntimeException("Player not found");
         }
 
         for (GridPoint2 obstacle : obstacles) {
