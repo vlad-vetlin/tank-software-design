@@ -27,14 +27,24 @@ public class LevelView implements Disposable {
 
     private final MapRenderer renderer;
 
+    private final TiledMapTileLayer groundLayer;
+
     public LevelView(TiledMap levelMap) {
         batch = new SpriteBatch();
 
-        TiledMapTileLayer groundLayer = getSingleLayer(levelMap);
+        groundLayer = getSingleLayer(levelMap);
         tankPlayerView = new TankPlayerView(batch, new Texture("images/tank_blue.png"), groundLayer);
         treeView = new TreeView(batch, new Texture("images/greenTree.png"), groundLayer);
 
         renderer = createSingleLayerMapRenderer(levelMap, batch);
+    }
+
+    public int getWidth() {
+        return groundLayer.getWidth();
+    }
+
+    public int getHeight() {
+        return groundLayer.getHeight();
     }
 
     public void render(Level level) {
