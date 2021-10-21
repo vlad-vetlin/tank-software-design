@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
+import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,10 +22,8 @@ class TankPlayerTest {
     void processMoveToDestination() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveUp();
         tankPlayer.processMoveToDestination(0.1f, 1f);
@@ -37,10 +36,8 @@ class TankPlayerTest {
     void processMoveToDestinationEnd() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveUp();
         tankPlayer.processMoveToDestination(1f, 1f);
@@ -53,10 +50,8 @@ class TankPlayerTest {
     void moveUpSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveUp();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -71,10 +66,8 @@ class TankPlayerTest {
     void moveUpFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(false);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveUp();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -89,10 +82,8 @@ class TankPlayerTest {
     void moveRightSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveRight();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -107,10 +98,8 @@ class TankPlayerTest {
     void moveRightFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(false);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveRight();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -125,10 +114,8 @@ class TankPlayerTest {
     void moveDownSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveDown();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -143,10 +130,8 @@ class TankPlayerTest {
     void moveDownFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(false);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveDown();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -161,10 +146,8 @@ class TankPlayerTest {
     void moveLeftSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(true);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveLeft();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
@@ -179,10 +162,8 @@ class TankPlayerTest {
     void moveLeftFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1));
+        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(false);
-
-        tankPlayer.setMoveStrategy(moveStrategy);
 
         tankPlayer.moveLeft();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();

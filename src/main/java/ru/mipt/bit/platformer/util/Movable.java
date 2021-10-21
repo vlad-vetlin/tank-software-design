@@ -15,6 +15,4 @@ public interface Movable {
     void processMoveToDestination(float deltaTime, float speed);
 
     GridPoint2 getCoordinates();
-
-    void setMoveStrategy(MoveStrategy strategy);
 }

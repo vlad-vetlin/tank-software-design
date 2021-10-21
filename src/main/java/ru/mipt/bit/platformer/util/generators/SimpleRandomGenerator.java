@@ -17,9 +17,12 @@ public class SimpleRandomGenerator implements LevelGenerator {
 
     private final int obstaclesCount;
 
-    public SimpleRandomGenerator(GridPoint2 bounds, int obstaclesCount) {
+    private final int enemiesCount;
+
+    public SimpleRandomGenerator(GridPoint2 bounds, int obstaclesCount, int enemiesCount) {
         this.bounds = bounds;
         this.obstaclesCount = obstaclesCount;
+        this.enemiesCount = enemiesCount;
     }
 
     private GridPoint2 randomPosition() {
@@ -52,12 +55,23 @@ public class SimpleRandomGenerator implements LevelGenerator {
         return obstacles;
     }
 
+    private Collection<GridPoint2> generateEnemies() {
+        Collection<GridPoint2> enemies = new ArrayList<>();
+
+        for (int i = 0; i < enemiesCount; ++i) {
+            enemies.add(randomPosition());
+        }
+
+        return enemies;
+    }
+
     @Override
     public Level createLevel() {
-        Level level = new Level();
+        Level level = new Level(bounds);
 
         level.addPlayer(generatePlayer());
         level.addObstacles(generateObstacles());
+        level.addEnemies(generateEnemies());
 
         return level;
     }

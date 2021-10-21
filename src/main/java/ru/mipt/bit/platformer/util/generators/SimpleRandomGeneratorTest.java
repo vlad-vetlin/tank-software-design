@@ -7,7 +7,7 @@ import ru.mipt.bit.platformer.util.levels.Level;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleRandomGeneratorTest {
-    private LevelGenerator generator = new SimpleRandomGenerator(new GridPoint2(10, 8), 79);
+    private LevelGenerator generator = new SimpleRandomGenerator(new GridPoint2(10, 8), 79, 0);
 
     @Test
     public void createLevelTest() {
@@ -18,7 +18,7 @@ class SimpleRandomGeneratorTest {
         int counter = 0;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 8; j++) {
-                if (level.hasObstacle(new GridPoint2(i, j))) {
+                if (level.hasObject(new GridPoint2(i, j))) {
                     ++counter;
                 }
             }
@@ -32,7 +32,7 @@ class SimpleRandomGeneratorTest {
         Exception exception = assertThrows(
                 RuntimeException.class,
                 () -> {
-                    new SimpleRandomGenerator(new GridPoint2(10, 8), 10 * 8).createLevel();
+                    new SimpleRandomGenerator(new GridPoint2(10, 8), 10 * 8, 0).createLevel();
                 }
         );
 

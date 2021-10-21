@@ -10,13 +10,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LevelTest {
-    private final Level level = new Level();
+    private final Level level = new Level(new GridPoint2(8, 10));
 
     @Test
     void addPlayer() {
         level.addPlayer(new GridPoint2(1, 1));
 
-        assertFalse(level.hasObstacle(new GridPoint2(1, 1)));
+        assertFalse(level.hasObject(new GridPoint2(1, 1)));
         GridPoint2 position = level.getPlayer().getCoordinates();
         assertEquals(1, position.x);
         assertEquals(1, position.y);
@@ -29,9 +29,9 @@ class LevelTest {
                 new GridPoint2(2, 3)
         ));
 
-        assertTrue(level.hasObstacle(new GridPoint2(1, 1)));
-        assertTrue(level.hasObstacle(new GridPoint2(2, 3)));
-        assertFalse(level.hasObstacle(new GridPoint2(3, 4)));
+        assertTrue(level.hasObject(new GridPoint2(1, 1)));
+        assertTrue(level.hasObject(new GridPoint2(2, 3)));
+        assertFalse(level.hasObject(new GridPoint2(3, 4)));
     }
 
     @Test

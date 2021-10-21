@@ -19,15 +19,12 @@ public final class TankPlayer implements Movable, RenderableObject {
 
     private GridPoint2 coordinates;
 
-    public TankPlayer(GridPoint2 coordinates) {
+    public TankPlayer(GridPoint2 coordinates, MoveStrategy moveStrategy) {
         this.coordinates = coordinates;
+        this.moveStrategy = moveStrategy;
 
         destinationCoordinates = coordinates;
         rotation = 0f;
-    }
-
-    public void setMoveStrategy(MoveStrategy strategy) {
-        moveStrategy = strategy;
     }
 
     @Override

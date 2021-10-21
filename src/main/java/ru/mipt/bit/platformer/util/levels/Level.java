@@ -2,8 +2,11 @@ package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.RenderableObject;
+import ru.mipt.bit.platformer.util.control.AIControl;
+import ru.mipt.bit.platformer.util.control.AbstractControl;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 
@@ -17,11 +20,20 @@ public final class Level {
 
     private final ArrayList<RenderableObject> obstacles = new ArrayList<>();
 
-    private TankPlayer createPlayer(GridPoint2 position) {
-        TankPlayer player = new TankPlayer(position);
-        player.setMoveStrategy(new SimpleMoveStrategy(this));
+    // Пока нет других игроков, кажется, что правильнее будет делать его
+    private final ArrayList<TankPlayer> enemies = new ArrayList<>();
 
-        return player;
+    private final AbstractControl aiControl;
+
+    private final GridPoint2 bounds;
+
+    private TankPlayer createPlayer(GridPoint2 position) {
+        return new TankPlayer(position, new SimpleMoveStrategy(this));
+    }
+
+    public Level(GridPoint2 bounds) {
+        aiControl = new AIControl();
+        this.bounds = bounds;
     }
 
     public void addPlayer(GridPoint2 position) {
@@ -36,6 +48,13 @@ public final class Level {
         );
     }
 
+    public void addEnemies(Collection<GridPoint2> positions) {
+        MoveStrategy moveStrategy = new SimpleMoveStrategy(this);
+        this.enemies.addAll(
+                positions.stream().map((value) -> new TankPlayer(value, moveStrategy)).collect(Collectors.toList())
+        );
+    }
+
     public TankPlayer getPlayer() {
         return player;
     }
@@ -45,22 +64,55 @@ public final class Level {
 
         result.add(player);
         result.addAll(obstacles);
+        result.addAll(enemies);
 
         return result;
     }
 
     public void processMoveToDestination(float deltaTime, float speed) {
         player.processMoveToDestination(deltaTime, speed);
+
+        for (TankPlayer enemy : enemies) {
+            enemy.processMoveToDestination(deltaTime, speed);
+        }
     }
 
-    public boolean hasObstacle(GridPoint2 point) {
-        // obstacle are few, because of it we can use linear algo
+    public void processAIMovements() {
+        for (TankPlayer enemy : enemies) {
+            aiControl.processMovement(enemy);
+        }
+    }
+
+    public boolean hasObject(GridPoint2 point) {
+        // obstacles are few, because of it we can use linear algo
         for (RenderableObject obstacle : obstacles) {
             if (point.equals(obstacle.getCoordinates())) {
                 return true;
             }
         }
 
-        return false;
+        for (TankPlayer enemy : enemies) {
+            if (point.equals(enemy.getCoordinates())) {
+                return true;
+            }
+
+            if (point.equals(enemy.getDestinationCoordinates())) {
+                return true;
+            }
+        }
+
+        if (point.equals(player.getCoordinates())) {
+            return true;
+        }
+
+        return point.equals(player.getDestinationCoordinates());
+    }
+
+    public int getWidth() {
+        return bounds.x;
+    }
+
+    public int getHeight() {
+        return bounds.y;
     }
 }
