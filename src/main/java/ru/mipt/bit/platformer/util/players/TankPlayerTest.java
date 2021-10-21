@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
-import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

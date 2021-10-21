@@ -21,6 +21,9 @@ class FileGeneratorTest {
         for (int i = 0; i < 8; ++i) {
             assertTrue(level.hasObject(new GridPoint2(i, 0)));
         }
+
+        assertEquals(10, level.getWidth());
+        assertEquals(8, level.getHeight());
     }
 
     @Test

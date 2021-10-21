@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 
-public final class Level {
+public class Level {
     private TankPlayer player;
 
     private final ArrayList<RenderableObject> obstacles = new ArrayList<>();
@@ -70,7 +70,9 @@ public final class Level {
     }
 
     public void processMoveToDestination(float deltaTime, float speed) {
-        player.processMoveToDestination(deltaTime, speed);
+        if (player != null) {
+            player.processMoveToDestination(deltaTime, speed);
+        }
 
         for (TankPlayer enemy : enemies) {
             enemy.processMoveToDestination(deltaTime, speed);
@@ -101,11 +103,11 @@ public final class Level {
             }
         }
 
-        if (point.equals(player.getCoordinates())) {
+        if (player != null && point.equals(player.getCoordinates())) {
             return true;
         }
 
-        return point.equals(player.getDestinationCoordinates());
+        return player != null && point.equals(player.getDestinationCoordinates());
     }
 
     public int getWidth() {

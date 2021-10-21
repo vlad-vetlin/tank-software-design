@@ -7,7 +7,7 @@ import ru.mipt.bit.platformer.util.levels.Level;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleRandomGeneratorTest {
-    private LevelGenerator generator = new SimpleRandomGenerator(new GridPoint2(10, 8), 79, 0);
+    private LevelGenerator generator = new SimpleRandomGenerator(new GridPoint2(10, 8), 78, 1);
 
     @Test
     public void createLevelTest() {
@@ -24,7 +24,8 @@ class SimpleRandomGeneratorTest {
             }
         }
 
-        assertEquals(79, counter);
+        // with player
+        assertEquals(80, counter);
     }
 
     @Test
