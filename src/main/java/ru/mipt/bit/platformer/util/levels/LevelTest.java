@@ -3,6 +3,7 @@ package ru.mipt.bit.platformer.util.levels;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.util.RenderableObject;
+import ru.mipt.bit.platformer.util.players.Action;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,7 +63,7 @@ class LevelTest {
     void processMovePlayerToDestination() {
         level.addPlayer(new GridPoint2(1, 1));
 
-        level.getPlayer().moveUp();
+        level.getPlayer().move(Action.MoveNorth);
         level.processMoveToDestination(1, 1);
 
         GridPoint2 position = level.getPlayer().getCoordinates();

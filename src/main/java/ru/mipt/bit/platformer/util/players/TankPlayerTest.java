@@ -24,7 +24,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.moveUp();
+        tankPlayer.move(Action.MoveNorth);
         tankPlayer.processMoveToDestination(0.1f, 1f);
 
         assertTrue(tankPlayer.getMovementProgress() > 0);
@@ -38,7 +38,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.moveUp();
+        tankPlayer.move(Action.MoveNorth);
         tankPlayer.processMoveToDestination(1f, 1f);
 
         assertEquals(1f, tankPlayer.getMovementProgress(), EPS);
@@ -52,7 +52,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.moveUp();
+        tankPlayer.move(Action.MoveNorth);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -68,7 +68,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(false);
 
-        tankPlayer.moveUp();
+        tankPlayer.move(Action.MoveNorth);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -84,7 +84,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(true);
 
-        tankPlayer.moveRight();
+        tankPlayer.move(Action.MoveEast);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(2, destinationCoords.x);
@@ -100,7 +100,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(false);
 
-        tankPlayer.moveRight();
+        tankPlayer.move(Action.MoveEast);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -116,7 +116,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(true);
 
-        tankPlayer.moveDown();
+        tankPlayer.move(Action.MoveSouth);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -132,7 +132,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(false);
 
-        tankPlayer.moveDown();
+        tankPlayer.move(Action.MoveSouth);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -148,7 +148,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(true);
 
-        tankPlayer.moveLeft();
+        tankPlayer.move(Action.MoveWest);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(0, destinationCoords.x);
@@ -164,7 +164,7 @@ class TankPlayerTest {
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(false);
 
-        tankPlayer.moveLeft();
+        tankPlayer.move(Action.MoveWest);
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);

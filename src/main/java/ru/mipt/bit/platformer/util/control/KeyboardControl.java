@@ -1,25 +1,27 @@
 package ru.mipt.bit.platformer.util.control;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.util.Movable;
+import ru.mipt.bit.platformer.util.levels.Level;
+import ru.mipt.bit.platformer.util.players.Action;
+import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
 public class KeyboardControl implements AbstractControl {
     @Override
-    public void processMovement(Movable movable) {
+    public void processMovement(Level level, TankPlayer player) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            movable.moveUp();
+            player.move(Action.MoveNorth);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            movable.moveLeft();
+            player.move(Action.MoveWest);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            movable.moveDown();
+            player.move(Action.MoveSouth);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            movable.moveRight();
+            player.move(Action.MoveEast);
         }
     }
 }

@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.RenderableObject;
 import ru.mipt.bit.platformer.util.control.AIControl;
 import ru.mipt.bit.platformer.util.control.AbstractControl;
+import ru.mipt.bit.platformer.util.control.AllBotsControl;
+import ru.mipt.bit.platformer.util.control.SmartAiControl;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
@@ -12,6 +14,8 @@ import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -23,7 +27,7 @@ public class Level {
     // Пока нет других игроков, кажется, что правильнее будет делать его
     private final ArrayList<TankPlayer> enemies = new ArrayList<>();
 
-    private final AbstractControl aiControl;
+    private final AllBotsControl aiControl;
 
     private final GridPoint2 bounds;
 
@@ -32,7 +36,7 @@ public class Level {
     }
 
     public Level(GridPoint2 bounds) {
-        aiControl = new AIControl();
+        aiControl = new SmartAiControl();
         this.bounds = bounds;
     }
 
@@ -80,9 +84,7 @@ public class Level {
     }
 
     public void processAIMovements() {
-        for (TankPlayer enemy : enemies) {
-            aiControl.processMovement(enemy);
-        }
+        aiControl.processMovement(this);
     }
 
     public boolean hasObject(GridPoint2 point) {
@@ -116,5 +118,25 @@ public class Level {
 
     public int getHeight() {
         return bounds.y;
+    }
+
+    public List<RenderableObject> getObstacles() {
+        return obstacles;
+    }
+
+    public List<TankPlayer> getEnemies() {
+        return enemies;
+    }
+
+    public Optional<TankPlayer> getPlayerByCoords(GridPoint2 point) {
+        Optional<TankPlayer> founded = enemies.stream()
+                .filter((enemy) -> enemy.getCoordinates().equals(point))
+                .findFirst();
+
+        if (player.getCoordinates().equals(point)) {
+            return founded.or(() -> Optional.of(player));
+        }
+
+        return founded;
     }
 }

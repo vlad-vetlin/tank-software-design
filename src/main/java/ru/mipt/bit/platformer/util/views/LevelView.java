@@ -60,7 +60,7 @@ public class LevelView implements Disposable {
     }
 
     public void render(Level level) {
-        control.processMovement(tankPlayer);
+        control.processMovement(level, tankPlayer);
         level.processAIMovements();
 
         renderer.render();

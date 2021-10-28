@@ -13,7 +13,7 @@ public final class TankPlayer implements Movable, RenderableObject {
 
     private float rotation;
 
-    private MoveStrategy moveStrategy;
+    private final MoveStrategy moveStrategy;
 
     private float movementProgress = 1f;
 
@@ -65,22 +65,36 @@ public final class TankPlayer implements Movable, RenderableObject {
     }
 
     @Override
-    public void moveUp() {
+    public void move(Action action) {
+        switch (action) {
+            case MoveNorth:
+                moveUp();
+                break;
+            case MoveWest:
+                moveLeft();
+                break;
+            case MoveEast:
+                moveRight();
+                break;
+            case MoveSouth:
+                moveDown();
+                break;
+        }
+    }
+
+    private void moveUp() {
         rotateAndMove(incrementedY(coordinates), 90f);
     }
 
-    @Override
-    public void moveRight() {
+    private void moveRight() {
         rotateAndMove(incrementedX(coordinates), 0f);
     }
 
-    @Override
-    public void moveLeft() {
+    private void moveLeft() {
         rotateAndMove(decrementedX(coordinates), -180f);
     }
 
-    @Override
-    public void moveDown() {
+    private void moveDown() {
         rotateAndMove(decrementedY(coordinates), -90f);
     }
 
