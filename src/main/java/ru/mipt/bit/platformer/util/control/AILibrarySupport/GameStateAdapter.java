@@ -5,7 +5,6 @@ import org.awesome.ai.state.immovable.Obstacle;
 import org.awesome.ai.state.movable.Bot;
 import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;

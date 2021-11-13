@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.util.views;
 
-import ru.mipt.bit.platformer.util.RenderableObject;
+import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
 
 public interface View {
-    void render(RenderableObject renderableObject);
+    void render(ObjectWithCoordinates renderableObject);
 }

@@ -9,11 +9,17 @@ import ru.mipt.bit.platformer.util.levels.Level;
 
 import java.util.List;
 
-public class SmartAiControl implements AllBotsControl {
-    private AI ai = new NotRecommendingAI();
+public class SmartAiControlCommand implements ControlCommand {
+    private static final AI ai = new NotRecommendingAI();
+
+    private final Level level;
+
+    public SmartAiControlCommand(Level level) {
+        this.level = level;
+    }
 
     @Override
-    public void processMovement(Level level) {
+    public void execute() {
         List<Recommendation> results = ai.recommend(new GameStateAdapter(level).getGameState());
 
         results.stream()

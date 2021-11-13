@@ -67,9 +67,8 @@ public class SimpleRandomGenerator implements LevelGenerator {
 
     @Override
     public Level createLevel() {
-        Level level = new Level(bounds);
+        Level level = new Level(bounds, generatePlayer());
 
-        level.addPlayer(generatePlayer());
         level.addObstacles(generateObstacles());
         level.addEnemies(generateEnemies());
 

@@ -58,8 +58,7 @@ public class FileGenerator implements LevelGenerator {
 
     @Override
     public Level createLevel() {
-        Level level = new Level(bounds);
-        level.addPlayer(playerPosition);
+        Level level = new Level(bounds, playerPosition);
         level.addObstacles(obstacles);
 
         return level;

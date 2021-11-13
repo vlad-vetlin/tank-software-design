@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TankPlayerTest {
-
     @Mock
     MoveStrategy moveStrategy;
 

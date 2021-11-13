@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.util.RenderableObject;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;

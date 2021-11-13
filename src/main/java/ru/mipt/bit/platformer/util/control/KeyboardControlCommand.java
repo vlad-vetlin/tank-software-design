@@ -8,9 +8,15 @@ import ru.mipt.bit.platformer.util.players.TankPlayer;
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.D;
 
-public class KeyboardControl implements AbstractControl {
+public class KeyboardControlCommand implements ControlCommand {
+    private final TankPlayer player;
+
+    public KeyboardControlCommand(Level level) {
+        this.player = level.getPlayer();
+    }
+
     @Override
-    public void processMovement(Level level, TankPlayer player) {
+    public void execute() {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
             player.move(Action.MoveNorth);
         }

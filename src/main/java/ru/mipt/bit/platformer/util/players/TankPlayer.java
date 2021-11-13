@@ -2,13 +2,13 @@ package ru.mipt.bit.platformer.util.players;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.Movable;
-import ru.mipt.bit.platformer.util.RenderableObject;
+import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public final class TankPlayer implements Movable, RenderableObject {
+public final class TankPlayer implements Movable, ObjectWithCoordinates {
     private GridPoint2 destinationCoordinates;
 
     private float rotation;

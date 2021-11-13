@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.util.generators.LevelGenerator;
 import ru.mipt.bit.platformer.util.generators.SimpleRandomGenerator;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.views.LevelView;
+import ru.mipt.bit.platformer.util.views.LevelGraphics;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -20,13 +20,13 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private Level level;
 
-    private LevelView levelView;
+    private LevelGraphics levelView;
 
     @Override
     public void create() {
         TiledMap levelMap = new TmxMapLoader().load("level.tmx");
 
-        levelView = new LevelView(levelMap);
+        levelView = new LevelGraphics(levelMap);
 
         LevelGenerator generator = new SimpleRandomGenerator(
                 new GridPoint2(levelView.getWidth(), levelView.getHeight()),

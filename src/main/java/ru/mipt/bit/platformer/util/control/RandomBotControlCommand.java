@@ -1,17 +1,22 @@
 package ru.mipt.bit.platformer.util.control;
 
-import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import java.util.Random;
 
-public class AIControl implements AbstractControl {
+public class RandomBotControlCommand implements ControlCommand {
     private static final Random random = new Random();
 
+    private final TankPlayer player;
+
+    public RandomBotControlCommand(TankPlayer player) {
+        this.player = player;
+    }
+
     @Override
-    public void processMovement(Level level, TankPlayer player) {
+    public void execute() {
         int direction = random.nextInt(4);
 
         switch (direction) {

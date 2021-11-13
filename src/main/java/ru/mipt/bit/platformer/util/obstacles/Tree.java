@@ -1,9 +1,9 @@
 package ru.mipt.bit.platformer.util.obstacles;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.RenderableObject;
+import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
 
-public final class Tree implements RenderableObject {
+public final class Tree implements ObjectWithCoordinates {
     GridPoint2 coordinates;
 
     public Tree(GridPoint2 coordinates) {

@@ -1,11 +1,8 @@
 package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.RenderableObject;
-import ru.mipt.bit.platformer.util.control.AIControl;
-import ru.mipt.bit.platformer.util.control.AbstractControl;
-import ru.mipt.bit.platformer.util.control.AllBotsControl;
-import ru.mipt.bit.platformer.util.control.SmartAiControl;
+import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
+import ru.mipt.bit.platformer.util.control.ControlCommand;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
@@ -20,32 +17,29 @@ import java.util.stream.Collectors;
 
 
 public class Level {
-    private TankPlayer player;
+    private final TankPlayer player;
 
-    private final ArrayList<RenderableObject> obstacles = new ArrayList<>();
+    private final ArrayList<ObjectWithCoordinates> obstacles = new ArrayList<>();
 
     // Пока нет других игроков, кажется, что правильнее будет делать его
     private final ArrayList<TankPlayer> enemies = new ArrayList<>();
 
-    private final AllBotsControl aiControl;
-
     private final GridPoint2 bounds;
+
+    private final MoveStrategy enemyMoveStrategy;
 
     private TankPlayer createPlayer(GridPoint2 position) {
         return new TankPlayer(position, new SimpleMoveStrategy(this));
     }
 
-    public Level(GridPoint2 bounds) {
-        aiControl = new SmartAiControl();
+    public Level(GridPoint2 bounds, GridPoint2 playerStartPosition) {
         this.bounds = bounds;
-    }
-
-    public void addPlayer(GridPoint2 position) {
-        this.player = createPlayer(position);
+        player = createPlayer(playerStartPosition);
+        enemyMoveStrategy = new SimpleMoveStrategy(this);
     }
 
     public void addObstacles(Collection<GridPoint2> positions) {
-        this.obstacles.addAll(
+        obstacles.addAll(
                 positions.stream()
                         .map(Tree::new)
                         .collect(Collectors.toList())
@@ -53,9 +47,8 @@ public class Level {
     }
 
     public void addEnemies(Collection<GridPoint2> positions) {
-        MoveStrategy moveStrategy = new SimpleMoveStrategy(this);
-        this.enemies.addAll(
-                positions.stream().map((value) -> new TankPlayer(value, moveStrategy)).collect(Collectors.toList())
+        enemies.addAll(
+                positions.stream().map((value) -> new TankPlayer(value, enemyMoveStrategy)).collect(Collectors.toList())
         );
     }
 
@@ -63,8 +56,8 @@ public class Level {
         return player;
     }
 
-    public ArrayList<RenderableObject> getRenderableObjects() {
-        ArrayList<RenderableObject> result = new ArrayList<>();
+    public ArrayList<ObjectWithCoordinates> getRenderableObjects() {
+        ArrayList<ObjectWithCoordinates> result = new ArrayList<>();
 
         result.add(player);
         result.addAll(obstacles);
@@ -83,13 +76,13 @@ public class Level {
         }
     }
 
-    public void processAIMovements() {
-        aiControl.processMovement(this);
+    public void processAIMovements(ControlCommand command) {
+        command.execute();
     }
 
     public boolean hasObject(GridPoint2 point) {
         // obstacles are few, because of it we can use linear algo
-        for (RenderableObject obstacle : obstacles) {
+        for (ObjectWithCoordinates obstacle : obstacles) {
             if (point.equals(obstacle.getCoordinates())) {
                 return true;
             }
@@ -120,7 +113,7 @@ public class Level {
         return bounds.y;
     }
 
-    public List<RenderableObject> getObstacles() {
+    public List<ObjectWithCoordinates> getObstacles() {
         return obstacles;
     }
 
