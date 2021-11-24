@@ -86,6 +86,11 @@ public final class GdxGameUtils {
         return clamp(previousProgress + deltaTime / speed, 0f, 1f);
     }
 
+    /**
+     * @param tileLayer - class with information about tiles
+     * @param tileCoordinates - 2d Coordinates. number of tile in x and y
+     * @return 2d coordinates of the tile center
+     */
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
         int tileWidth = tileLayer.getTileWidth();
         int tileHeight = tileLayer.getTileHeight();
