@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.BulletFactory;
 import ru.mipt.bit.platformer.util.ObjectEventManager;
 import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
+import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
@@ -51,8 +52,8 @@ public class ObjectsRepository {
         }
     }
 
-    public ArrayList<AbstractObjectWithCoordinates> getRenderableObjects() {
-        ArrayList<AbstractObjectWithCoordinates> result = new ArrayList<>();
+    public ArrayList<RenderableObjectWithCoordinates> getRenderableObjects() {
+        ArrayList<RenderableObjectWithCoordinates> result = new ArrayList<>();
 
         result.add(player);
         result.addAll(obstacles.values());

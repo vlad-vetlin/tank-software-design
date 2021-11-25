@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
+import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.control.SmartAiControlCommand;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
@@ -69,7 +70,7 @@ class LevelTest {
                 )
         );
 
-        Collection<? extends AbstractObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
+        Collection<? extends RenderableObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
 
         assertEquals(3, renderableObjects.size());
     }

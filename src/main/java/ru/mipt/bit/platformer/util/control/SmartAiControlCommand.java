@@ -3,6 +3,7 @@ package ru.mipt.bit.platformer.util.control;
 import org.awesome.ai.AI;
 import org.awesome.ai.Recommendation;
 import org.awesome.ai.strategy.NotRecommendingAI;
+import ru.mipt.bit.platformer.util.ControlCommand;
 import ru.mipt.bit.platformer.util.control.AILibrarySupport.GameStateAdapter;
 import ru.mipt.bit.platformer.util.control.AILibrarySupport.RecommendationAdapter;
 import ru.mipt.bit.platformer.util.levels.Level;

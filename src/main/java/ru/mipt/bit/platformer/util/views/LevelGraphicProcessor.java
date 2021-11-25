@@ -1,11 +1,8 @@
 package ru.mipt.bit.platformer.util.views;
 
-import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.ObjectEventManager;
+import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.obstacles.Bullet;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,15 +12,15 @@ import java.util.UUID;
 public class LevelGraphicProcessor {
     private final LevelGraphics levelGraphics;
 
-    private final Map<UUID, AbstractObjectWithCoordinates> objects;
+    private final Map<UUID, RenderableObjectWithCoordinates> objects;
 
     public LevelGraphicProcessor(LevelGraphics graphics, Level level, ObjectEventManager observer) {
         levelGraphics = graphics;
 
         objects = new HashMap<>();
 
-        List<AbstractObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
-        for (AbstractObjectWithCoordinates objectWithCoordinates : renderableObjects) {
+        List<RenderableObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
+        for (RenderableObjectWithCoordinates objectWithCoordinates : renderableObjects) {
             objects.put(objectWithCoordinates.getId(), objectWithCoordinates);
         }
 

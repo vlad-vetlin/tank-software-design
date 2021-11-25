@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.LevelKeyboardControlCommand;
 import ru.mipt.bit.platformer.util.ObjectEventManager;
 import ru.mipt.bit.platformer.util.control.KeyboardControlCommand;
 import ru.mipt.bit.platformer.util.control.RandomControlCommand;
@@ -71,6 +72,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         level.processAIMovements(new RandomControlCommand(level));
 
         // render each tile of the level
+        new LevelKeyboardControlCommand(levelView).execute();
         currentLevelGraphics.render();
     }
 

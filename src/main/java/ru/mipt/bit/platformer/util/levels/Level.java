@@ -2,18 +2,15 @@ package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
 import ru.mipt.bit.platformer.BulletFactory;
-import ru.mipt.bit.platformer.util.ObjectEventManager;
-import ru.mipt.bit.platformer.util.control.ControlCommand;
+import ru.mipt.bit.platformer.util.ControlCommand;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 import ru.mipt.bit.platformer.util.players.moveStrategies.BulletMoveStrategy;
 import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 
 public class Level {
     private final ObjectsRepository repository;
@@ -111,9 +108,17 @@ public class Level {
         }
     }
 
-    private TankPlayer checkEnemyCollision(GridPoint2 point) {
+    private TankPlayer checkEnemyCollision(GridPoint2 point, boolean isStart) {
         TankPlayer enemy = repository.getEnemyByCoords(point);
-        if (enemy == null || !enemy.isStopped()) {
+        if (enemy == null) {
+            return null;
+        }
+
+        if (isStart && enemy.getMovementProgress() > 0.5f) {
+            return null;
+        }
+
+        if (!isStart && enemy.getMovementProgress() < 0.5f) {
             return null;
         }
 
@@ -127,7 +132,7 @@ public class Level {
     private void checkEnemyCollisions() {
         List<Bullet> bulletsToDelete = new ArrayList<>();
         for (Bullet bullet : repository.getBullets()) {
-            TankPlayer enemy = checkEnemyCollision(bullet.getCoordinates());
+            TankPlayer enemy = checkEnemyCollision(bullet.getCoordinates(), true);
 
             if (enemy != null && bullet.getParent() != enemy) {
                 if (enemy.processDamage()) {
@@ -137,7 +142,7 @@ public class Level {
                 continue;
             }
 
-            enemy = checkEnemyCollision(bullet.getDestinationCoordinates());
+            enemy = checkEnemyCollision(bullet.getDestinationCoordinates(), false);
 
             if (enemy != null && bullet.getParent() != enemy && bullet.getMovementProgress() > 0.5f) {
                 if (enemy.processDamage()) {
@@ -153,6 +158,8 @@ public class Level {
     }
 
     private void checkPlayerCollisions() {
+        List<Bullet> bulletsToDelete = new ArrayList<>();
+
         for (Bullet bullet : repository.getBullets()) {
             TankPlayer player = repository.getPlayer();
 
@@ -160,13 +167,14 @@ public class Level {
                 continue;
             }
 
-            if (!player.isStopped()) {
+            if (player.getMovementProgress() > 0.5f) {
                 continue;
             }
 
             if (bullet.getCoordinates().equals(player.getCoordinates())) {
                 if (player.processDamage()) {
                     repository.removePlayer();
+                    bulletsToDelete.add(bullet);
                 }
             }
 
@@ -176,8 +184,13 @@ public class Level {
             ) {
                 if (player.processDamage()) {
                     repository.removePlayer();
+                    bulletsToDelete.add(bullet);
                 }
             }
+        }
+
+        for (Bullet bullet : bulletsToDelete) {
+            repository.removeBullet(bullet);
         }
     }
 

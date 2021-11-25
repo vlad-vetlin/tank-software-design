@@ -6,16 +6,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.util.ObjectEventManager;
-import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
-import ru.mipt.bit.platformer.util.RenderableInMoveObject;
+import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.views.decorators.RenderWithLivesDecorator;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
@@ -33,9 +32,29 @@ public class LevelGraphics implements Disposable {
 
     private final TiledMapTileLayer groundLayer;
 
-    private final Map<String, StaticView> classNameToStaticView;
+    private final Renderable<RenderableObjectWithCoordinates> objectRenderer;
 
-    private final Map<String, MovableView> classNameToMovableView;
+    private final Map<
+            String, Function<Renderable<RenderableObjectWithCoordinates>, Renderable<RenderableObjectWithCoordinates>>
+    > turnedDecorators = new HashMap<>();
+
+    public void turnOnLives() {
+        turnedDecorators.put(RenderWithLivesDecorator.class.getName(), RenderWithLivesDecorator::new);
+    }
+
+    public void turnOffLives() {
+        turnedDecorators.remove(RenderWithLivesDecorator.class.getName());
+    }
+
+    public Renderable<RenderableObjectWithCoordinates> decorateAll(
+            Renderable<RenderableObjectWithCoordinates> renderer
+    ) {
+        for (var decorator : turnedDecorators.values()) {
+            renderer = decorator.apply(renderer);
+        }
+
+        return renderer;
+    }
 
     public LevelGraphics(TiledMap levelMap) {
         batch = new SpriteBatch();
@@ -47,13 +66,12 @@ public class LevelGraphics implements Disposable {
 
         renderer = createSingleLayerMapRenderer(levelMap, batch);
 
-        classNameToStaticView = Map.of(
+        objectRenderer = new DefaultRenderer(Map.of(
                 Tree.class.getName(), treeView
-        );
-        classNameToMovableView = Map.of(
+        ), Map.of(
                 TankPlayer.class.getName(), tankPlayerView,
                 Bullet.class.getName(), bulletView
-        );
+        ));
     }
 
     public int getWidth() {
@@ -64,21 +82,15 @@ public class LevelGraphics implements Disposable {
         return groundLayer.getHeight();
     }
 
-    public void render(Collection<AbstractObjectWithCoordinates> renderableObjects) {
+    public void render(Collection<RenderableObjectWithCoordinates> renderableObjects) {
         renderer.render();
 
         // start recording all drawing commands
         batch.begin();
 
-        for (AbstractObjectWithCoordinates renderableObject : renderableObjects) {
-            if (classNameToStaticView.containsKey(renderableObject.getClass().getName())) {
-                classNameToStaticView.get(renderableObject.getClass().getName()).render(renderableObject);
-                continue;
-            }
-
-            classNameToMovableView
-                    .get(renderableObject.getClass().getName())
-                    .render((RenderableInMoveObject) renderableObject);
+        for (RenderableObjectWithCoordinates renderableObject : renderableObjects) {
+            objectRenderer.setObject(renderableObject);
+            decorateAll(objectRenderer).render();
         }
 
         // submit all drawing requests

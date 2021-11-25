@@ -1,6 +1,6 @@
 package ru.mipt.bit.platformer.util.control;
 
-import ru.mipt.bit.platformer.util.levels.Level;
+import ru.mipt.bit.platformer.util.ControlCommand;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 
