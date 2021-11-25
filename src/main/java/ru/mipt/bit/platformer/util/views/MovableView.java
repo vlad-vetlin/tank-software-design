@@ -7,13 +7,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import ru.mipt.bit.platformer.util.RenderableInMoveObject;
 import ru.mipt.bit.platformer.util.TileMovement;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
-public class TankPlayerView implements Disposable {
+public class MovableView implements Disposable, View<RenderableInMoveObject> {
     private final Batch batch;
 
     private final TextureRegion graphics;
@@ -24,7 +24,7 @@ public class TankPlayerView implements Disposable {
 
     private final Rectangle rectangle;
 
-    public TankPlayerView(Batch batch, Texture texture, TiledMapTileLayer groundLayer) {
+    public MovableView(Batch batch, Texture texture, TiledMapTileLayer groundLayer) {
         this.batch = batch;
         this.texture = texture;
         graphics = new TextureRegion(texture);
@@ -32,7 +32,7 @@ public class TankPlayerView implements Disposable {
         rectangle = createBoundingRectangle(graphics);
     }
 
-    public void render(TankPlayer renderableObject) {
+    public void render(RenderableInMoveObject renderableObject) {
         tileMovement.moveRectangleBetweenTileCenters(
                 rectangle,
                 renderableObject.getCoordinates(),

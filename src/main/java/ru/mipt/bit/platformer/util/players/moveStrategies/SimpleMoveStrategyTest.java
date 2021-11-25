@@ -79,7 +79,7 @@ class SimpleMoveStrategyTest {
         MoveStrategy moveStrategy = new SimpleMoveStrategy(level);
         TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
 
-        when(level.hasObject(new GridPoint2(1, 2))).thenReturn(false);
+        when(level.getRepository().hasObject(new GridPoint2(1, 2))).thenReturn(false);
 
         assertFalse(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2)));
     }

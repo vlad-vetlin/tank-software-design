@@ -19,6 +19,7 @@ public class ActionAdapter {
             case MoveWest:
                 this.action = Action.MoveWest;
                 break;
+            case Shoot:
             default:
                 this.action = Action.Shoot;
         }

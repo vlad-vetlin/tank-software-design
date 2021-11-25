@@ -17,7 +17,7 @@ public class RandomBotControlCommand implements ControlCommand {
 
     @Override
     public void execute() {
-        int direction = random.nextInt(4);
+        int direction = random.nextInt(5);
 
         switch (direction) {
             case 0:
@@ -31,6 +31,8 @@ public class RandomBotControlCommand implements ControlCommand {
                 return;
             case 3:
                 player.move(Action.MoveWest);
+            case 4:
+                player.fire();
         }
     }
 }

@@ -15,12 +15,15 @@ public class FileGenerator implements LevelGenerator {
 
     private final Collection<GridPoint2> obstacles;
 
+    private final Collection<GridPoint2> enemies;
+
     private final GridPoint2 bounds;
 
     public FileGenerator(String path) {
         // Если иксов много - берем последний
         // Если предмет вне размера карты - ок. Танк может просто выехать из тумана войны потом
         obstacles = new ArrayList<>();
+        enemies = new ArrayList<>();
         bounds = new GridPoint2();
         int i = 0;
         try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
@@ -34,6 +37,10 @@ public class FileGenerator implements LevelGenerator {
 
                     if (line.charAt(j) == 'T') {
                         obstacles.add(new GridPoint2(j, i));
+                    }
+
+                    if (line.charAt(j) == 'E') {
+                        enemies.add(new GridPoint2(j, i));
                     }
                 }
                 ++i;
@@ -58,9 +65,6 @@ public class FileGenerator implements LevelGenerator {
 
     @Override
     public Level createLevel() {
-        Level level = new Level(bounds, playerPosition);
-        level.addObstacles(obstacles);
-
-        return level;
+        return new Level(bounds, playerPosition, obstacles, enemies);
     }
 }

@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
-import ru.mipt.bit.platformer.util.obstacles.Tree;
+import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
-public class TreeView implements Disposable {
+public class StaticView implements Disposable, View<AbstractObjectWithCoordinates> {
     protected Batch batch;
 
     protected Texture texture;
@@ -21,7 +21,7 @@ public class TreeView implements Disposable {
 
     private final Rectangle rectangle;
 
-    protected TreeView(Batch batch, Texture texture, TiledMapTileLayer groundLayer) {
+    protected StaticView(Batch batch, Texture texture, TiledMapTileLayer groundLayer) {
         this.batch = batch;
         this.texture = texture;
         graphics = new TextureRegion(texture);
@@ -29,7 +29,7 @@ public class TreeView implements Disposable {
         this.groundLayer = groundLayer;
     }
 
-    public void render(Tree tree) {
+    public void render(AbstractObjectWithCoordinates tree) {
         moveRectangleAtTileCenter(groundLayer, rectangle, tree.getCoordinates());
         drawTextureRegionUnscaled(batch, graphics, rectangle, tree.getRotation());
     }

@@ -29,5 +29,8 @@ public class KeyboardControlCommand implements ControlCommand {
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
             player.move(Action.MoveEast);
         }
+        if (Gdx.input.isKeyPressed(SPACE) || Gdx.input.isKeyPressed(N)) {
+            player.fire();
+        }
     }
 }

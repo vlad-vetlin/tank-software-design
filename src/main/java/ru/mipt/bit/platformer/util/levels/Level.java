@@ -1,108 +1,62 @@
 package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
+import ru.mipt.bit.platformer.BulletFactory;
+import ru.mipt.bit.platformer.util.ObjectEventManager;
 import ru.mipt.bit.platformer.util.control.ControlCommand;
-import ru.mipt.bit.platformer.util.obstacles.Tree;
+import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
-import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
+import ru.mipt.bit.platformer.util.players.moveStrategies.BulletMoveStrategy;
 import ru.mipt.bit.platformer.util.players.moveStrategies.SimpleMoveStrategy;
 
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 public class Level {
-    private final TankPlayer player;
-
-    private final ArrayList<ObjectWithCoordinates> obstacles = new ArrayList<>();
-
-    // Пока нет других игроков, кажется, что правильнее будет делать его
-    private final ArrayList<TankPlayer> enemies = new ArrayList<>();
+    private final ObjectsRepository repository;
 
     private final GridPoint2 bounds;
 
-    private final MoveStrategy enemyMoveStrategy;
-
-    private TankPlayer createPlayer(GridPoint2 position) {
-        return new TankPlayer(position, new SimpleMoveStrategy(this));
+    private TankPlayer createPlayer(GridPoint2 position, BulletFactory callback) {
+        return new TankPlayer(position, new SimpleMoveStrategy(this), callback);
     }
 
     public Level(GridPoint2 bounds, GridPoint2 playerStartPosition) {
+        this(bounds, playerStartPosition, List.of(), List.of());
+    }
+
+    public Level(
+            GridPoint2 bounds,
+            GridPoint2 playerStartPosition,
+            Collection<GridPoint2> obstacles,
+            Collection<GridPoint2> enemies
+    ) {
+        repository = new ObjectsRepository();
+        BulletFactory callback = (parent, position, rotation) -> repository.addBullet(
+                new Bullet(
+                        position,
+                        rotation,
+                        new BulletMoveStrategy(this),
+                        parent
+                )
+        );
+
         this.bounds = bounds;
-        player = createPlayer(playerStartPosition);
-        enemyMoveStrategy = new SimpleMoveStrategy(this);
-    }
 
-    public void addObstacles(Collection<GridPoint2> positions) {
-        obstacles.addAll(
-                positions.stream()
-                        .map(Tree::new)
-                        .collect(Collectors.toList())
-        );
-    }
-
-    public void addEnemies(Collection<GridPoint2> positions) {
-        enemies.addAll(
-                positions.stream().map((value) -> new TankPlayer(value, enemyMoveStrategy)).collect(Collectors.toList())
-        );
+        repository.setPlayer(createPlayer(playerStartPosition, callback));
+        repository.addObstacles(obstacles);
+        repository.addEnemies(enemies, new SimpleMoveStrategy(this), callback);
     }
 
     public TankPlayer getPlayer() {
-        return player;
-    }
-
-    public ArrayList<ObjectWithCoordinates> getRenderableObjects() {
-        ArrayList<ObjectWithCoordinates> result = new ArrayList<>();
-
-        result.add(player);
-        result.addAll(obstacles);
-        result.addAll(enemies);
-
-        return result;
-    }
-
-    public void processMoveToDestination(float deltaTime, float speed) {
-        if (player != null) {
-            player.processMoveToDestination(deltaTime, speed);
-        }
-
-        for (TankPlayer enemy : enemies) {
-            enemy.processMoveToDestination(deltaTime, speed);
-        }
+        return repository.getPlayer();
     }
 
     public void processAIMovements(ControlCommand command) {
         command.execute();
-    }
-
-    public boolean hasObject(GridPoint2 point) {
-        // obstacles are few, because of it we can use linear algo
-        for (ObjectWithCoordinates obstacle : obstacles) {
-            if (point.equals(obstacle.getCoordinates())) {
-                return true;
-            }
-        }
-
-        for (TankPlayer enemy : enemies) {
-            if (point.equals(enemy.getCoordinates())) {
-                return true;
-            }
-
-            if (point.equals(enemy.getDestinationCoordinates())) {
-                return true;
-            }
-        }
-
-        if (player != null && point.equals(player.getCoordinates())) {
-            return true;
-        }
-
-        return player != null && point.equals(player.getDestinationCoordinates());
     }
 
     public int getWidth() {
@@ -113,23 +67,130 @@ public class Level {
         return bounds.y;
     }
 
-    public List<ObjectWithCoordinates> getObstacles() {
-        return obstacles;
+    public ObjectsRepository getRepository() {
+        return repository;
     }
 
-    public List<TankPlayer> getEnemies() {
-        return enemies;
+    private void processPlayerMove(float deltaTime, float speed) {
+        TankPlayer player = repository.getPlayer();
+        if (player != null) {
+            player.processOneTick(deltaTime, speed);
+        }
     }
 
-    public Optional<TankPlayer> getPlayerByCoords(GridPoint2 point) {
-        Optional<TankPlayer> founded = enemies.stream()
-                .filter((enemy) -> enemy.getCoordinates().equals(point))
-                .findFirst();
+    private void processEnemiesMove(float deltaTime, float speed) {
+        for (TankPlayer enemy : repository.getEnemies()) {
+            enemy.processOneTick(deltaTime, speed);
+        }
+    }
 
-        if (player.getCoordinates().equals(point)) {
-            return founded.or(() -> Optional.of(player));
+    private void processBulletsMove(float deltaTime, float speed) {
+        List<Bullet> bulletsToDelete = new ArrayList<>();
+        for (Bullet bullet : repository.getBullets()) {
+            if (!bullet.moveForward()) {
+                bulletsToDelete.add(bullet);
+            }
+            bullet.processOneTick(deltaTime, speed);
         }
 
-        return founded;
+        for (Bullet bullet : bulletsToDelete) {
+            repository.removeBullet(bullet);
+        }
+    }
+
+    private void checkObstacleCollisions() {
+        List<Bullet> bulletsToDelete = new ArrayList<>();
+        for (Bullet bullet : repository.getBullets()) {
+            if (repository.getObstacleByCoords(bullet.getCoordinates()) != null) {
+                bulletsToDelete.add(bullet);
+            }
+        }
+
+        for (Bullet bullet : bulletsToDelete) {
+            repository.removeBullet(bullet);
+        }
+    }
+
+    private TankPlayer checkEnemyCollision(GridPoint2 point) {
+        TankPlayer enemy = repository.getEnemyByCoords(point);
+        if (enemy == null || !enemy.isStopped()) {
+            return null;
+        }
+
+        if (enemy.getCoordinates().equals(point)) {
+            return enemy;
+        }
+
+        return null;
+    }
+
+    private void checkEnemyCollisions() {
+        List<Bullet> bulletsToDelete = new ArrayList<>();
+        for (Bullet bullet : repository.getBullets()) {
+            TankPlayer enemy = checkEnemyCollision(bullet.getCoordinates());
+
+            if (enemy != null && bullet.getParent() != enemy) {
+                if (enemy.processDamage()) {
+                    repository.removeEnemy(enemy);
+                }
+                bulletsToDelete.add(bullet);
+                continue;
+            }
+
+            enemy = checkEnemyCollision(bullet.getDestinationCoordinates());
+
+            if (enemy != null && bullet.getParent() != enemy && bullet.getMovementProgress() > 0.5f) {
+                if (enemy.processDamage()) {
+                    repository.removeEnemy(enemy);
+                }
+                bulletsToDelete.add(bullet);
+            }
+        }
+
+        for (Bullet bullet : bulletsToDelete) {
+            repository.removeBullet(bullet);
+        }
+    }
+
+    private void checkPlayerCollisions() {
+        for (Bullet bullet : repository.getBullets()) {
+            TankPlayer player = repository.getPlayer();
+
+            if (bullet.getParent() == player) {
+                continue;
+            }
+
+            if (!player.isStopped()) {
+                continue;
+            }
+
+            if (bullet.getCoordinates().equals(player.getCoordinates())) {
+                if (player.processDamage()) {
+                    repository.removePlayer();
+                }
+            }
+
+            if (
+                    bullet.getMovementProgress() > 0.5f &&
+                    bullet.getDestinationCoordinates().equals(player.getCoordinates())
+            ) {
+                if (player.processDamage()) {
+                    repository.removePlayer();
+                }
+            }
+        }
+    }
+
+    private void checkCollisions() {
+        checkObstacleCollisions();
+        checkEnemyCollisions();
+        checkPlayerCollisions();
+    }
+
+    public void processOneTick(float deltaTime, float speed) {
+        processPlayerMove(deltaTime, speed);
+        processEnemiesMove(deltaTime, speed);
+        processBulletsMove(deltaTime, speed);
+        checkCollisions();
     }
 }

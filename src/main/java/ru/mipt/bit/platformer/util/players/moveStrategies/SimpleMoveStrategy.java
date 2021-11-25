@@ -23,6 +23,6 @@ public final class SimpleMoveStrategy implements MoveStrategy {
 
         int distance = Math.abs(destination.x - movable.getCoordinates().x) +
                 Math.abs(destination.y - movable.getCoordinates().y);
-        return distance == 1 && !level.hasObject(destination);
+        return distance == 1 && !level.getRepository().hasObject(destination);
     }
 }

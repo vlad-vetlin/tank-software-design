@@ -6,8 +6,6 @@ import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 
-import java.util.Optional;
-
 public class RecommendationAdapter {
     private final TankPlayer tankPlayer;
 
@@ -15,13 +13,7 @@ public class RecommendationAdapter {
 
     public RecommendationAdapter(Level level, Recommendation recommendation) {
         GridPoint2 point = new GridPoint2(recommendation.getActor().getX(), recommendation.getActor().getY());
-        Optional<TankPlayer> optional = level.getPlayerByCoords(point);
-
-        if (optional.isEmpty()) {
-            tankPlayer = null;
-        } else {
-            tankPlayer = optional.get();
-        }
+        tankPlayer = level.getRepository().getPlayerByCoords(point);
 
         action = new ActionAdapter(recommendation.getAction()).getAction();
     }

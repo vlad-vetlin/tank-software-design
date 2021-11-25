@@ -19,7 +19,7 @@ class FileGeneratorTest {
         assertEquals(new GridPoint2(0, 6), player.getCoordinates());
 
         for (int i = 0; i < 8; ++i) {
-            assertTrue(level.hasObject(new GridPoint2(i, 0)));
+            assertTrue(level.getRepository().hasObject(new GridPoint2(i, 0)));
         }
 
         assertEquals(10, level.getWidth());

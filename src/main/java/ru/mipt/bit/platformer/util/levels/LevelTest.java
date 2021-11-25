@@ -3,11 +3,12 @@ package ru.mipt.bit.platformer.util.levels;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import ru.mipt.bit.platformer.util.ObjectWithCoordinates;
+import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.control.SmartAiControlCommand;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.TankPlayer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,42 +30,46 @@ class LevelTest {
 
     @Test
     void addObstacles() {
-        Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
-
-        level.addObstacles(List.of(
+        Level level = new Level(
+                new GridPoint2(8, 10),
                 new GridPoint2(1, 1),
-                new GridPoint2(2, 3)
-        ));
+                List.of(
+                        new GridPoint2(1, 1),
+                        new GridPoint2(2, 3)
+                ),
+                List.of()
+        );
 
-        assertTrue(level.hasObject(new GridPoint2(1, 1)));
-        assertTrue(level.hasObject(new GridPoint2(2, 3)));
-        assertFalse(level.hasObject(new GridPoint2(3, 4)));
+        assertTrue(level.getRepository().hasObject(new GridPoint2(1, 1)));
+        assertTrue(level.getRepository().hasObject(new GridPoint2(2, 3)));
+        assertFalse(level.getRepository().hasObject(new GridPoint2(3, 4)));
     }
 
     @Test
     void addEnemies() {
-        Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
-
-        level.addEnemies(List.of(
-            new GridPoint2(1, 1),
-            new GridPoint2(2, 3)
-        ));
-
-        assertTrue(level.hasObject(new GridPoint2(1, 1)));
-        assertTrue(level.hasObject(new GridPoint2(2, 3)));
-        assertFalse(level.hasObject(new GridPoint2(3, 4)));
-    }
-
-    @Test
-    void getRenderableObjects() {
-        Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
-
-        level.addObstacles(List.of(
+        Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1), List.of(), List.of(
                 new GridPoint2(1, 1),
                 new GridPoint2(2, 3)
         ));
 
-        Collection<? extends ObjectWithCoordinates> renderableObjects = level.getRenderableObjects();
+        assertTrue(level.getRepository().hasObject(new GridPoint2(1, 1)));
+        assertTrue(level.getRepository().hasObject(new GridPoint2(2, 3)));
+        assertFalse(level.getRepository().hasObject(new GridPoint2(3, 4)));
+    }
+
+    @Test
+    void getRenderableObjects() {
+        Level level = new Level(
+                new GridPoint2(8, 10),
+                new GridPoint2(1, 1),
+                List.of(),
+                List.of(
+                        new GridPoint2(1, 1),
+                        new GridPoint2(2, 3)
+                )
+        );
+
+        Collection<? extends AbstractObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
 
         assertEquals(3, renderableObjects.size());
     }
@@ -74,7 +79,7 @@ class LevelTest {
         Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
 
         level.getPlayer().move(Action.MoveNorth);
-        level.processMoveToDestination(1, 1);
+        level.processOneTick(1, 1);
 
         GridPoint2 position = level.getPlayer().getCoordinates();
 
@@ -85,28 +90,34 @@ class LevelTest {
     void testProcessMoveEnemyToDestination() {
         aiControl = mock(SmartAiControlCommand.class);
 
-        Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
+        Level level = new Level(
+                new GridPoint2(8, 10),
+                new GridPoint2(1, 1),
+                List.of(),
+                List.of(new GridPoint2(2, 2))
+        );
+        ObjectsRepository repository = level.getRepository();
+
         doAnswer(invocation -> {
-            List<TankPlayer> bots = level.getEnemies();
+            List<TankPlayer> bots = new ArrayList<>(repository.getEnemies());
             bots.get(0).move(Action.MoveNorth);
 
             return null;
         }).when(aiControl).execute();
-        level.addEnemies(List.of(new GridPoint2(2, 2)));
 
-        assertTrue(level.hasObject(new GridPoint2(2, 2)));
+        assertTrue(repository.hasObject(new GridPoint2(2, 2)));
         level.processAIMovements(aiControl);
-        assertTrue(level.hasObject(new GridPoint2(2, 2)));
+        assertTrue(repository.hasObject(new GridPoint2(2, 2)));
 
-        level.processMoveToDestination(1, 1);
-        assertFalse(level.hasObject(new GridPoint2(2, 2)));
-        assertTrue(level.hasObject(new GridPoint2(2, 3)));
+        level.processOneTick(1, 1);
+        assertFalse(repository.hasObject(new GridPoint2(2, 2)));
+        assertTrue(repository.hasObject(new GridPoint2(2, 3)));
     }
 
     @Test
     void testHasPlayer() {
         Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
 
-        assertTrue(level.hasObject(new GridPoint2(1, 1)));
+        assertTrue(level.getRepository().hasObject(new GridPoint2(1, 1)));
     }
 }
