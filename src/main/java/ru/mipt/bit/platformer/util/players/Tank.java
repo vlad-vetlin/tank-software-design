@@ -1,9 +1,13 @@
 package ru.mipt.bit.platformer.util.players;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.BulletFactory;
 import ru.mipt.bit.platformer.CanFire;
+import ru.mipt.bit.platformer.HasLives;
+import ru.mipt.bit.platformer.ObjectFactory;
 import ru.mipt.bit.platformer.util.AbstractMovable;
+import ru.mipt.bit.platformer.util.control.ActionGenerator;
+import ru.mipt.bit.platformer.util.events.CreateEvent;
+import ru.mipt.bit.platformer.util.events.ObjectEventManager;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 
@@ -11,9 +15,11 @@ import java.util.Map;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.incrementByRotation;
 
-public final class TankPlayer extends AbstractMovable implements CanFire {
-    private final BulletFactory fireCallback;
-
+/**
+ * Adapter в системе портов и адаптеров
+ * DomainLayer
+ */
+public final class Tank extends AbstractMovable implements CanFire, HasLives {
     private boolean isReloaded = true;
 
     private float reloadProcessedTime = 0f;
@@ -22,15 +28,18 @@ public final class TankPlayer extends AbstractMovable implements CanFire {
 
     private State state = State.New;
 
-    private Map<State, Float> stateToDeltaTimeMultiplier;
+    private final Map<State, Float> stateToDeltaTimeMultiplier;
 
-    public TankPlayer(GridPoint2 coordinates, MoveStrategy moveStrategy) {
+    public Tank(GridPoint2 coordinates, MoveStrategy moveStrategy) {
         this(coordinates, moveStrategy, null);
     }
 
-    public TankPlayer(GridPoint2 coordinates, MoveStrategy moveStrategy, BulletFactory fireCallback) {
-        super(coordinates, 0f, moveStrategy);
-        this.fireCallback = fireCallback;
+    public Tank(
+            GridPoint2 coordinates,
+            MoveStrategy moveStrategy,
+            ActionGenerator actionGenerator
+    ) {
+        super(coordinates, 0f, moveStrategy, actionGenerator);
         this.lives = 100;
 
         stateToDeltaTimeMultiplier = Map.of(
@@ -48,9 +57,16 @@ public final class TankPlayer extends AbstractMovable implements CanFire {
         }
         isReloaded = false;
 
-        if (fireCallback != null) {
-            fireCallback.createBullet(this, incrementByRotation(getCoordinates(), getRotation()), getRotation());
-        }
+        ObjectEventManager.notifyEvent(
+                Bullet.class,
+                new CreateEvent(
+                        ObjectFactory.createBullet(
+                                incrementByRotation(getCoordinates(),getRotation()),
+                                getRotation(),
+                                this
+                        )
+                )
+        );
     }
 
     private float getPreparedDeltaTime(float deltaTime) {
@@ -71,15 +87,7 @@ public final class TankPlayer extends AbstractMovable implements CanFire {
         }
     }
 
-    public void processAction(Action action) {
-        if (action == Action.Shoot) {
-            fire();
-            return;
-        }
-
-        move(action);
-    }
-
+    @Override
     public boolean processDamage() {
         lives -= Bullet.DAMAGE;
 
@@ -94,6 +102,7 @@ public final class TankPlayer extends AbstractMovable implements CanFire {
         return lives < 0;
     }
 
+    @Override
     public int getLives() {
         return lives;
     }

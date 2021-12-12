@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * порт в системе портов и адаптеров
+ * Application layer
+ */
 public class FileGenerator implements LevelGenerator {
     private GridPoint2 playerPosition;
 

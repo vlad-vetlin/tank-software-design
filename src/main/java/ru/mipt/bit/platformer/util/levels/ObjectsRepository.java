@@ -1,42 +1,39 @@
 package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.BulletFactory;
-import ru.mipt.bit.platformer.util.ObjectEventManager;
+import ru.mipt.bit.platformer.ObjectFactory;
+import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
-import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
+import ru.mipt.bit.platformer.util.players.Tank;
 
 import java.util.*;
 
+/**
+ * Адаптер в системе портов и адаптеров
+ * InfrastructureLayer
+ */
 public class ObjectsRepository {
     private final Map<GridPoint2, AbstractObjectWithCoordinates> obstacles = new HashMap<>();
 
     private static final Map<UUID, Bullet> bullets = new HashMap<>();
 
-    private final Map<UUID, TankPlayer> enemies = new HashMap<>();
+    private final Map<UUID, Tank> enemies = new HashMap<>();
 
-    private TankPlayer player;
+    private Tank player;
 
-    private ObjectEventManager observer;
-
-    public void setPlayer(TankPlayer player) {
+    public void setPlayer(Tank player) {
         this.player = player;
     }
 
     public void removePlayer() {
-        notify("RemovePlayer", player);
+        System.out.println("Game over!");
     }
 
-    public TankPlayer getPlayer() {
+    public Tank getPlayer() {
         return player;
-    }
-
-    public void setObserver(ObjectEventManager eventManager) {
-        observer = eventManager;
     }
 
     public void addObstacles(Collection<GridPoint2> positions) {
@@ -45,9 +42,9 @@ public class ObjectsRepository {
         }
     }
 
-    public void addEnemies(Collection<GridPoint2> positions, MoveStrategy moveStrategy, BulletFactory callback) {
+    public void addEnemies(Collection<GridPoint2> positions) {
         for (GridPoint2 position : positions) {
-            TankPlayer enemy = new TankPlayer(position, moveStrategy, callback);
+            Tank enemy = ObjectFactory.createEnemy(position);
             enemies.put(enemy.getId(), enemy);
         }
     }
@@ -62,29 +59,45 @@ public class ObjectsRepository {
         return result;
     }
 
-    public boolean hasObject(GridPoint2 point) {
+    public AbstractObjectWithCoordinates getObject(GridPoint2 point) {
         if (obstacles.containsKey(point)) {
-            return true;
+            return obstacles.get(point);
         }
 
-        for (TankPlayer enemy : enemies.values()) {
+        for (Tank enemy : enemies.values()) {
             if (point.equals(enemy.getCoordinates())) {
-                return true;
-            }
-
-            if (point.equals(enemy.getDestinationCoordinates())) {
-                return true;
+                return enemy;
             }
         }
 
         if (player != null && point.equals(player.getCoordinates())) {
-            return true;
+            return player;
         }
 
-        return player != null && point.equals(player.getDestinationCoordinates());
+        return null;
     }
 
-    public TankPlayer getEnemyByCoords(GridPoint2 point) {
+    public AbstractMovable getObjectByDestination(GridPoint2 point) {
+        for (Tank tank : getEnemies()) {
+            if (tank.getDestinationCoordinates().equals(point)) {
+                return tank;
+            }
+        }
+
+        for (Bullet bullet : getBullets()) {
+            if (bullet.getDestinationCoordinates().equals(point)) {
+                return bullet;
+            }
+        }
+
+        if (player.getDestinationCoordinates().equals(point)) {
+            return player;
+        }
+
+        return null;
+    }
+
+    public Tank getEnemyByCoords(GridPoint2 point) {
         return enemies.values()
                 .stream()
                 .filter(enemy -> enemy.getCoordinates().equals(point))
@@ -92,8 +105,8 @@ public class ObjectsRepository {
                 .orElse(null);
     }
 
-    public TankPlayer getPlayerByCoords(GridPoint2 point) {
-        TankPlayer enemy = getEnemyByCoords(point);
+    public Tank getPlayerByCoords(GridPoint2 point) {
+        Tank enemy = getEnemyByCoords(point);
 
         if (enemy == null) {
             return player.getCoordinates().equals(point) ? player : null;
@@ -102,7 +115,7 @@ public class ObjectsRepository {
         return enemy;
     }
 
-    public Collection<TankPlayer> getEnemies() {
+    public Collection<Tank> getEnemies() {
         return enemies.values();
     }
 
@@ -112,34 +125,21 @@ public class ObjectsRepository {
 
     public void addBullet(Bullet bullet) {
         bullets.put(bullet.getId(), bullet);
-        notify("AddBullet", bullet);
     }
 
     public Collection<AbstractObjectWithCoordinates> getObstacles() {
         return obstacles.values();
     }
 
-    public AbstractObjectWithCoordinates getObstacleByCoords(GridPoint2 point) {
-        return obstacles.getOrDefault(point, null);
-    }
-
     public void removeBullet(Bullet bullet) {
-        if (bullets.containsKey(bullet.getId())) {
-            bullets.remove(bullet.getId());
-            notify("RemoveBullet", bullet);
-        }
+        bullets.remove(bullet.getId());
     }
 
-    public void removeEnemy(TankPlayer enemy) {
-        if (enemies.containsKey(enemy.getId())) {
-            enemies.remove(enemy.getId());
-            notify("RemoveEnemy", enemy);
-        }
+    public boolean hasEnemy(Tank tank) {
+        return enemies.containsKey(tank.getId());
     }
 
-    private void notify(String event, AbstractObjectWithCoordinates object) {
-        if (observer != null) {
-            observer.notify(event, object);
-        }
+    public void removeEnemy(Tank enemy) {
+        enemies.remove(enemy.getId());
     }
 }

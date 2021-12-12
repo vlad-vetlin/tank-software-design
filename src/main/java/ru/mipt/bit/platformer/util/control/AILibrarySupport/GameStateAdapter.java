@@ -3,13 +3,16 @@ package ru.mipt.bit.platformer.util.control.AILibrarySupport;
 import org.awesome.ai.state.GameState;
 import org.awesome.ai.state.immovable.Obstacle;
 import org.awesome.ai.state.movable.Bot;
-import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.levels.ObjectsRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * Application layer
+ */
 public class GameStateAdapter {
     private final GameState gameState;
 

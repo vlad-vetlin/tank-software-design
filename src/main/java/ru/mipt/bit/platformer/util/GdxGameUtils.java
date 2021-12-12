@@ -17,6 +17,10 @@ import java.util.NoSuchElementException;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * InfrastructureLayer
+ */
 public final class GdxGameUtils {
 
     private GdxGameUtils() {

@@ -1,10 +1,10 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.control.ActionGenerator;
+import ru.mipt.bit.platformer.util.control.ActionProcessor;
 import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
-
-import java.util.UUID;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
@@ -18,18 +18,25 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
 
     protected final MoveStrategy moveStrategy;
 
+    private final ActionGenerator actionGenerator;
+
     /**
      * Destination point in which player is moving
      */
     private GridPoint2 destinationCoordinates;
 
-    public AbstractMovable(GridPoint2 coordinates, float rotation, MoveStrategy moveStrategy) {
+    public AbstractMovable(
+            GridPoint2 coordinates,
+            float rotation,
+            MoveStrategy moveStrategy,
+            ActionGenerator actionGenerator
+    ) {
         super(coordinates, rotation);
         this.moveStrategy = moveStrategy;
 
         destinationCoordinates = coordinates;
+        this.actionGenerator = actionGenerator;
     }
-
 
     @Override
     public boolean move(Action action) {
@@ -47,12 +54,7 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
         return true;
     }
 
-    @Override
-    public boolean moveForward() {
-        return move(getActionByRotation(getRotation()));
-    }
-
-    private Action getActionByRotation(float rotation) {
+    public Action getActionByRotation(float rotation) {
         if (floatEquals(rotation, 90f)) {
             return Action.MoveNorth;
         }
@@ -83,6 +85,7 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
     }
 
     public void processOneTick(float deltaTime, float speed) {
+        generateAction();
         processMoveToDestination(deltaTime, speed);
     }
 
@@ -103,6 +106,16 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
 
     public boolean isStopped() {
         return isEqual(movementProgress, 1f);
+    }
+
+    private void generateAction() {
+        if (actionGenerator != null) {
+            ActionProcessor.processAction(this);
+        }
+    }
+
+    public ActionGenerator getActionGenerator() {
+        return actionGenerator;
     }
 
     private boolean moveUp() {

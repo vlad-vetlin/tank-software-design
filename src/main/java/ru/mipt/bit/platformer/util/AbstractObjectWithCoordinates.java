@@ -4,6 +4,10 @@ import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.UUID;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * InfrastructureLayer
+ */
 public abstract class AbstractObjectWithCoordinates implements RenderableObjectWithCoordinates {
     /**
      * В данный момент есть 4 значения

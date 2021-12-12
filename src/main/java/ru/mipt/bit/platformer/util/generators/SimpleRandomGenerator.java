@@ -8,6 +8,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 
+/**
+ * Порт в системе портов и адаптеров
+ * Application layer
+ */
 public class SimpleRandomGenerator implements LevelGenerator {
     private static final Random random = new Random();
 
@@ -67,6 +71,11 @@ public class SimpleRandomGenerator implements LevelGenerator {
 
     @Override
     public Level createLevel() {
-        return new Level(bounds, generatePlayer(), generateObstacles(), generateEnemies());
+        return new Level(
+                bounds,
+                generatePlayer(),
+                generateObstacles(),
+                generateEnemies()
+        );
     }
 }

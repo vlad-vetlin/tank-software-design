@@ -4,6 +4,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.awesome.ai.state.immovable.Obstacle;
 import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * Application layer
+ */
 public class ObstacleAdapter {
     private final Obstacle obstacle;
 

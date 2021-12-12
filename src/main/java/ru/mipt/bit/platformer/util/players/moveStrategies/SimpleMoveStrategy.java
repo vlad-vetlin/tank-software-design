@@ -1,19 +1,24 @@
 package ru.mipt.bit.platformer.util.players.moveStrategies;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.levels.Level;
 
+/**
+ * Адаптер в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public final class SimpleMoveStrategy implements MoveStrategy {
 
-    private final Level level;
+    private Level level;
 
     public SimpleMoveStrategy(Level level) {
         this.level = level;
     }
 
     @Override
-    public boolean canMove(Movable movable, GridPoint2 destination) {
+    public boolean canMove(AbstractMovable movable, GridPoint2 destination) {
         if (
                 destination.x < 0 || destination.x >= level.getWidth() ||
                 destination.y < 0 || destination.y >= level.getHeight()
@@ -23,6 +28,13 @@ public final class SimpleMoveStrategy implements MoveStrategy {
 
         int distance = Math.abs(destination.x - movable.getCoordinates().x) +
                 Math.abs(destination.y - movable.getCoordinates().y);
-        return distance == 1 && !level.getRepository().hasObject(destination);
+        return distance == 1 &&
+               level.getRepository().getObject(destination) == null &&
+               level.getRepository().getObjectByDestination(destination) == null;
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        this.level = level;
     }
 }

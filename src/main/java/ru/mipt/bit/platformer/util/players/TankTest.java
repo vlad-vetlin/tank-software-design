@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TankPlayerTest {
+class TankTest {
     @Mock
     MoveStrategy moveStrategy;
 
@@ -20,7 +20,7 @@ class TankPlayerTest {
     void processMoveToDestination() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
         tankPlayer.move(Action.MoveNorth);
@@ -34,7 +34,7 @@ class TankPlayerTest {
     void processMoveToDestinationEnd() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
         tankPlayer.move(Action.MoveNorth);
@@ -48,7 +48,7 @@ class TankPlayerTest {
     void moveUpSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
         tankPlayer.move(Action.MoveNorth);
@@ -64,7 +64,7 @@ class TankPlayerTest {
     void moveUpFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(false);
 
         tankPlayer.move(Action.MoveNorth);
@@ -80,7 +80,7 @@ class TankPlayerTest {
     void moveRightSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(true);
 
         tankPlayer.move(Action.MoveEast);
@@ -96,7 +96,7 @@ class TankPlayerTest {
     void moveRightFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(false);
 
         tankPlayer.move(Action.MoveEast);
@@ -112,7 +112,7 @@ class TankPlayerTest {
     void moveDownSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(true);
 
         tankPlayer.move(Action.MoveSouth);
@@ -128,7 +128,7 @@ class TankPlayerTest {
     void moveDownFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(false);
 
         tankPlayer.move(Action.MoveSouth);
@@ -144,7 +144,7 @@ class TankPlayerTest {
     void moveLeftSuccess() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(true);
 
         tankPlayer.move(Action.MoveWest);
@@ -160,7 +160,7 @@ class TankPlayerTest {
     void moveLeftFail() {
         moveStrategy = mock(MoveStrategy.class);
 
-        TankPlayer tankPlayer = new TankPlayer(new GridPoint2(1, 1), moveStrategy);
+        Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(false);
 
         tankPlayer.move(Action.MoveWest);

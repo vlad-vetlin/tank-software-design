@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.util.generators;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.players.Tank;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,12 +14,12 @@ class FileGeneratorTest {
     @Test
     void CreateLevelTest() {
         Level level = generator.createLevel();
-        TankPlayer player = level.getPlayer();
+        Tank player = level.getPlayer();
 
         assertEquals(new GridPoint2(0, 6), player.getCoordinates());
 
         for (int i = 0; i < 8; ++i) {
-            assertTrue(level.getRepository().hasObject(new GridPoint2(i, 0)));
+            assertNotNull(level.getRepository().getObject(new GridPoint2(i, 0)));
         }
 
         assertEquals(10, level.getWidth());

@@ -2,6 +2,10 @@ package ru.mipt.bit.platformer.util.control.AILibrarySupport;
 
 import ru.mipt.bit.platformer.util.players.Action;
 
+/**
+ * Адаптер в системе портов и адаптеров
+ * Application layer
+ */
 public class ActionAdapter {
     private final Action action;
 

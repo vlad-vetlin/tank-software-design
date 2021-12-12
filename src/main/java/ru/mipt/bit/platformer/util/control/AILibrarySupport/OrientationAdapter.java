@@ -2,6 +2,10 @@ package ru.mipt.bit.platformer.util.control.AILibrarySupport;
 
 import org.awesome.ai.state.movable.Orientation;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * Application layer
+ */
 public class OrientationAdapter {
     private final Orientation orientation;
 

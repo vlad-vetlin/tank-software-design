@@ -13,6 +13,10 @@ import ru.mipt.bit.platformer.util.TileMovement;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.drawTextureRegionUnscaled;
 
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public class MovableView implements Disposable, View<RenderableInMoveObject> {
     private final Batch batch;
 

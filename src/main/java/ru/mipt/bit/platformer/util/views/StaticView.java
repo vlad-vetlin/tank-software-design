@@ -12,6 +12,10 @@ import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
 
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public class StaticView implements Disposable, View<RenderableObjectWithCoordinates> {
     protected Batch batch;
 

@@ -5,6 +5,10 @@ import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 
 import java.util.Map;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public class DefaultRenderer implements Renderable<RenderableObjectWithCoordinates> {
     private final Map<String, StaticView> classNameToStaticView;
 

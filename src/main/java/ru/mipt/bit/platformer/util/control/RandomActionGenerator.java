@@ -1,21 +1,20 @@
 package ru.mipt.bit.platformer.util.control;
 
-import ru.mipt.bit.platformer.util.ControlCommand;
+import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.players.Action;
 
 import java.util.Random;
 
-public class RandomControlCommand implements ControlCommand {
-    private final Level level;
-
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
+public final class RandomActionGenerator implements ActionGenerator {
     private static final Random random = new Random();
 
-    public RandomControlCommand(Level level) {
-        this.level = level;
-    }
-
-    private Action generateAction() {
+    @Override
+    public Action getRecommendation(AbstractMovable movable) {
         int action = random.nextInt(5);
 
         switch (action) {
@@ -34,9 +33,5 @@ public class RandomControlCommand implements ControlCommand {
     }
 
     @Override
-    public void execute() {
-        level.getRepository()
-             .getEnemies()
-             .forEach(enemy -> enemy.processAction(generateAction()));
-    }
+    public void setNewGameState(Level level) {}
 }

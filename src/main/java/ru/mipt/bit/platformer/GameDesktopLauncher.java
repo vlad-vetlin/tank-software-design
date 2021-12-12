@@ -7,10 +7,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.util.LevelKeyboardControlCommand;
-import ru.mipt.bit.platformer.util.ObjectEventManager;
-import ru.mipt.bit.platformer.util.control.KeyboardControlCommand;
-import ru.mipt.bit.platformer.util.control.RandomControlCommand;
 import ru.mipt.bit.platformer.util.generators.LevelGenerator;
 import ru.mipt.bit.platformer.util.generators.SimpleRandomGenerator;
 import ru.mipt.bit.platformer.util.levels.Level;
@@ -19,6 +15,10 @@ import ru.mipt.bit.platformer.util.views.LevelGraphics;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
@@ -28,6 +28,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     private LevelGraphics levelView;
 
     private LevelGraphicProcessor currentLevelGraphics;
+
 
     @Override
     public void create() {
@@ -43,11 +44,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 
 //        LevelGenerator generator = new FileGenerator("src/main/resources/levels/testLevel");
 
-        ObjectEventManager observer = new ObjectEventManager();
-
         level = generator.createLevel();
-        level.getRepository().setObserver(observer);
-        currentLevelGraphics = new LevelGraphicProcessor(levelView, level, observer);
+        Settings.setLevelToMoveStrategies(level);
+        currentLevelGraphics = new LevelGraphicProcessor(levelView, level);
     }
 
     private void clearScreen() {
@@ -68,11 +67,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         // Processing of new commands should be after processing tick. Because we need to check collisions before
         // calling new movements
-        new KeyboardControlCommand(level).execute();
-        level.processAIMovements(new RandomControlCommand(level));
+        Settings.updateActionGenerators(level);
+        level.processActions();
 
-        // render each tile of the level
-        new LevelKeyboardControlCommand(levelView).execute();
         currentLevelGraphics.render();
     }
 

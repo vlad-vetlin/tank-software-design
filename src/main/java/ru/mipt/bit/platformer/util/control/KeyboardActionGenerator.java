@@ -1,37 +1,39 @@
 package ru.mipt.bit.platformer.util.control;
 
 import com.badlogic.gdx.Gdx;
-import ru.mipt.bit.platformer.util.ControlCommand;
+import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.players.Action;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
 
 import static com.badlogic.gdx.Input.Keys.*;
-import static com.badlogic.gdx.Input.Keys.D;
+import static com.badlogic.gdx.Input.Keys.N;
 
-public class KeyboardControlCommand implements ControlCommand {
-    private final TankPlayer player;
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
+public final class KeyboardActionGenerator implements ActionGenerator {
+    @Override
+    public Action getRecommendation(AbstractMovable movable) {
+        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
+            return Action.MoveNorth;
+        }
+        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
+            return Action.MoveWest;
+        }
+        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
+            return Action.MoveSouth;
+        }
+        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
+            return Action.MoveEast;
+        }
+        if (Gdx.input.isKeyPressed(SPACE) || Gdx.input.isKeyPressed(N)) {
+            return Action.Shoot;
+        }
 
-    public KeyboardControlCommand(Level level) {
-        this.player = level.getPlayer();
+        return Action.Nothing;
     }
 
     @Override
-    public void execute() {
-        if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            player.move(Action.MoveNorth);
-        }
-        if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            player.move(Action.MoveWest);
-        }
-        if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            player.move(Action.MoveSouth);
-        }
-        if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            player.move(Action.MoveEast);
-        }
-        if (Gdx.input.isKeyPressed(SPACE) || Gdx.input.isKeyPressed(N)) {
-            player.fire();
-        }
-    }
+    public void setNewGameState(Level level) {}
 }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
 import ru.mipt.bit.platformer.util.obstacles.Tree;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.players.Tank;
 import ru.mipt.bit.platformer.util.views.decorators.RenderWithLivesDecorator;
 
 import java.util.*;
@@ -69,7 +69,7 @@ public class LevelGraphics implements Disposable {
         objectRenderer = new DefaultRenderer(Map.of(
                 Tree.class.getName(), treeView
         ), Map.of(
-                TankPlayer.class.getName(), tankPlayerView,
+                Tank.class.getName(), tankPlayerView,
                 Bullet.class.getName(), bulletView
         ));
     }

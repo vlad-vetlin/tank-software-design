@@ -1,11 +1,15 @@
 package ru.mipt.bit.platformer.util.views.commands;
 
-import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.players.Tank;
 
+/**
+ * Port в системе портов и адаптеров
+ * ApplicationLayer
+ */
 public class ShowLivesCommand implements ViewCommand {
-    private TankPlayer player;
+    private final Tank player;
 
-    public ShowLivesCommand(TankPlayer tankPlayer) {
+    public ShowLivesCommand(Tank tankPlayer) {
         player = tankPlayer;
     }
 

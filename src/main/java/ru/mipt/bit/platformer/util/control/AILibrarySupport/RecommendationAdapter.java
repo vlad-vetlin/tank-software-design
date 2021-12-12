@@ -4,10 +4,14 @@ import com.badlogic.gdx.math.GridPoint2;
 import org.awesome.ai.Recommendation;
 import ru.mipt.bit.platformer.util.levels.Level;
 import ru.mipt.bit.platformer.util.players.Action;
-import ru.mipt.bit.platformer.util.players.TankPlayer;
+import ru.mipt.bit.platformer.util.players.Tank;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * Application layer
+ */
 public class RecommendationAdapter {
-    private final TankPlayer tankPlayer;
+    private final Tank tankPlayer;
 
     private final Action action;
 
@@ -18,7 +22,7 @@ public class RecommendationAdapter {
         action = new ActionAdapter(recommendation.getAction()).getAction();
     }
 
-    public TankPlayer getTankPlayer() {
+    public Tank getTankPlayer() {
         return tankPlayer;
     }
 
