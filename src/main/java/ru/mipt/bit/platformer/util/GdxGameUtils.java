@@ -17,6 +17,10 @@ import java.util.NoSuchElementException;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * InfrastructureLayer
+ */
 public final class GdxGameUtils {
 
     private GdxGameUtils() {
@@ -68,6 +72,31 @@ public final class GdxGameUtils {
         return new GridPoint2(point).add(1, 0);
     }
 
+    public static boolean floatEquals(float lhs, float rhs) {
+        float EPS = 0.0000001f;
+        return Math.abs(lhs - rhs) < EPS;
+    }
+
+    public static GridPoint2 incrementByRotation(GridPoint2 point2, float rotation) {
+        if (floatEquals(rotation, 90f)) {
+            return incrementedY(point2);
+        }
+
+        if (floatEquals(rotation, -180f)) {
+            return decrementedX(point2);
+        }
+
+        if (floatEquals(rotation, 0f)) {
+            return incrementedX(point2);
+        }
+
+        if (floatEquals(rotation, -90f)) {
+            return decrementedY(point2);
+        }
+
+        return point2;
+    }
+
     public static void drawTextureRegionUnscaled(Batch batch, TextureRegion region, Rectangle rectangle, float rotation) {
         int regionWidth = region.getRegionWidth();
         int regionHeight = region.getRegionHeight();
@@ -86,6 +115,11 @@ public final class GdxGameUtils {
         return clamp(previousProgress + deltaTime / speed, 0f, 1f);
     }
 
+    /**
+     * @param tileLayer - class with information about tiles
+     * @param tileCoordinates - 2d Coordinates. number of tile in x and y
+     * @return 2d coordinates of the tile center
+     */
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
         int tileWidth = tileLayer.getTileWidth();
         int tileHeight = tileLayer.getTileHeight();

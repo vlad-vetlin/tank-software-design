@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
+/**
+ * Adapter в системе портов и адаптеров
+ * InfrastructureLayer
+ */
 public class TileMovement {
 
     private final TiledMapTileLayer tileLayer;
@@ -17,6 +21,13 @@ public class TileMovement {
         this.interpolation = interpolation;
     }
 
+    /**
+     * @param rectangle - player rectangle (will be updated and return)
+     * @param fromTileCoordinates - start player coordinates
+     * @param toTileCoordinates - finish player coordinates
+     * @param progress - current progress of moving (proportion of full path)
+     * @return rectangle for current player position
+     */
     public Rectangle moveRectangleBetweenTileCenters(Rectangle rectangle, GridPoint2 fromTileCoordinates, GridPoint2 toTileCoordinates, float progress) {
         moveRectangleAtTileCenter(tileLayer, rectangle, fromTileCoordinates);
         float fromTileBottomLeftX = rectangle.x;
