@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.util.players;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.CanFire;
-import ru.mipt.bit.platformer.HasLives;
+import ru.mipt.bit.platformer.util.CanFire;
+import ru.mipt.bit.platformer.util.HasLives;
 import ru.mipt.bit.platformer.ObjectFactory;
 import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.control.ActionGenerator;

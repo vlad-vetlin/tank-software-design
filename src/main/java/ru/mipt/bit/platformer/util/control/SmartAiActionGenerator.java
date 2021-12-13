@@ -4,10 +4,11 @@ import org.awesome.ai.AI;
 import org.awesome.ai.Recommendation;
 import org.awesome.ai.strategy.NotRecommendingAI;
 import ru.mipt.bit.platformer.util.AbstractMovable;
+import ru.mipt.bit.platformer.util.actions.ActionCommand;
+import ru.mipt.bit.platformer.util.actions.NothingCommand;
 import ru.mipt.bit.platformer.util.control.AILibrarySupport.GameStateAdapter;
 import ru.mipt.bit.platformer.util.control.AILibrarySupport.RecommendationAdapter;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.players.Action;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.UUID;
  * ApplicationLayer
  */
 public final class SmartAiActionGenerator implements ActionGenerator {
-    private final Map<UUID, Action> tankToAction = new HashMap<>();
+    private final Map<UUID, ActionCommand> tankToAction = new HashMap<>();
 
     private final AI ai;
 
@@ -28,8 +29,8 @@ public final class SmartAiActionGenerator implements ActionGenerator {
     }
 
     @Override
-    public Action getRecommendation(AbstractMovable movable) {
-        return tankToAction.getOrDefault(movable.getId(), Action.Nothing);
+    public ActionCommand getRecommendation(AbstractMovable movable) {
+        return tankToAction.getOrDefault(movable.getId(), new NothingCommand(movable));
     }
 
     @Override
@@ -39,7 +40,7 @@ public final class SmartAiActionGenerator implements ActionGenerator {
         for (Recommendation recommendation : recommendations) {
             RecommendationAdapter recommendationAdapter = new RecommendationAdapter(level, recommendation);
 
-            tankToAction.put(recommendationAdapter.getTankPlayer().getId(), recommendationAdapter.getAction());
+            tankToAction.put(recommendationAdapter.getTank().getId(), recommendationAdapter.getAction());
         }
     }
 }

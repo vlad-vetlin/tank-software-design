@@ -1,9 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.actions.*;
 import ru.mipt.bit.platformer.util.control.ActionGenerator;
-import ru.mipt.bit.platformer.util.control.ActionProcessor;
-import ru.mipt.bit.platformer.util.players.Action;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
@@ -38,36 +37,20 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
         this.actionGenerator = actionGenerator;
     }
 
-    @Override
-    public boolean move(Action action) {
-        switch (action) {
-            case MoveNorth:
-                return moveUp();
-            case MoveWest:
-                return moveLeft();
-            case MoveEast:
-                return moveRight();
-            case MoveSouth:
-                return moveDown();
-        }
-
-        return true;
-    }
-
-    public Action getActionByRotation(float rotation) {
+    public ActionCommand getActionByRotation(float rotation) {
         if (floatEquals(rotation, 90f)) {
-            return Action.MoveNorth;
+            return new MoveUpCommand(this);
         }
 
         if (floatEquals(rotation, -90f)) {
-            return Action.MoveSouth;
+            return new MoveDownCommand(this);
         }
 
         if (floatEquals(rotation, 0f)) {
-            return Action.MoveEast;
+            return new MoveRightCommand(this);
         }
 
-        return Action.MoveWest;
+        return new MoveLeftCommand(this);
     }
 
     @Override
@@ -110,7 +93,7 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
 
     private void generateAction() {
         if (actionGenerator != null) {
-            ActionProcessor.processAction(this);
+            getActionGenerator().getRecommendation(this).exec();
         }
     }
 
@@ -118,19 +101,19 @@ public abstract class AbstractMovable extends AbstractObjectWithCoordinates impl
         return actionGenerator;
     }
 
-    private boolean moveUp() {
+    public boolean moveUp() {
         return rotateAndMove(incrementedY(coordinates), 90f);
     }
 
-    private boolean moveRight() {
+    public boolean moveRight() {
         return rotateAndMove(incrementedX(coordinates), 0f);
     }
 
-    private boolean moveLeft() {
+    public boolean moveLeft() {
         return rotateAndMove(decrementedX(coordinates), -180f);
     }
 
-    private boolean moveDown() {
+    public boolean moveDown() {
         return rotateAndMove(decrementedY(coordinates), -90f);
     }
 

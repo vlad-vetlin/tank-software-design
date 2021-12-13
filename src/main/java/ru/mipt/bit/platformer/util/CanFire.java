@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer;
+package ru.mipt.bit.platformer.util;
 
 /**
  * Adapter в системе портов и адаптеров

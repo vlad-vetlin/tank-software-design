@@ -2,8 +2,9 @@ package ru.mipt.bit.platformer.util.control;
 
 import com.badlogic.gdx.Gdx;
 import ru.mipt.bit.platformer.util.AbstractMovable;
+import ru.mipt.bit.platformer.util.actions.*;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.players.Action;
+import ru.mipt.bit.platformer.util.players.Tank;
 
 import static com.badlogic.gdx.Input.Keys.*;
 import static com.badlogic.gdx.Input.Keys.N;
@@ -14,24 +15,26 @@ import static com.badlogic.gdx.Input.Keys.N;
  */
 public final class KeyboardActionGenerator implements ActionGenerator {
     @Override
-    public Action getRecommendation(AbstractMovable movable) {
+    public ActionCommand getRecommendation(AbstractMovable movable) {
         if (Gdx.input.isKeyPressed(UP) || Gdx.input.isKeyPressed(W)) {
-            return Action.MoveNorth;
+            return new MoveUpCommand(movable);
         }
         if (Gdx.input.isKeyPressed(LEFT) || Gdx.input.isKeyPressed(A)) {
-            return Action.MoveWest;
+            return new MoveLeftCommand(movable);
         }
         if (Gdx.input.isKeyPressed(DOWN) || Gdx.input.isKeyPressed(S)) {
-            return Action.MoveSouth;
+            return new MoveDownCommand(movable);
         }
         if (Gdx.input.isKeyPressed(RIGHT) || Gdx.input.isKeyPressed(D)) {
-            return Action.MoveEast;
+            return new MoveRightCommand(movable);
         }
         if (Gdx.input.isKeyPressed(SPACE) || Gdx.input.isKeyPressed(N)) {
-            return Action.Shoot;
+            if (movable instanceof Tank) {
+                return new FireCommand((Tank) movable);
+            }
         }
 
-        return Action.Nothing;
+        return new NothingCommand(movable);
     }
 
     @Override

@@ -3,6 +3,10 @@ package ru.mipt.bit.platformer.util.players;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import ru.mipt.bit.platformer.util.actions.MoveDownCommand;
+import ru.mipt.bit.platformer.util.actions.MoveLeftCommand;
+import ru.mipt.bit.platformer.util.actions.MoveRightCommand;
+import ru.mipt.bit.platformer.util.actions.MoveUpCommand;
 import ru.mipt.bit.platformer.util.players.moveStrategies.MoveStrategy;
 
 import static org.mockito.Mockito.mock;
@@ -23,7 +27,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveNorth);
+        new MoveUpCommand(tankPlayer).exec();
         tankPlayer.processMoveToDestination(0.1f, 1f);
 
         assertTrue(tankPlayer.getMovementProgress() > 0);
@@ -37,7 +41,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveNorth);
+        new MoveUpCommand(tankPlayer).exec();
         tankPlayer.processMoveToDestination(1f, 1f);
 
         assertEquals(1f, tankPlayer.getMovementProgress(), EPS);
@@ -51,7 +55,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveNorth);
+        new MoveUpCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -67,7 +71,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 2))).thenReturn(false);
 
-        tankPlayer.move(Action.MoveNorth);
+        new MoveUpCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -83,7 +87,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveEast);
+        new MoveRightCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(2, destinationCoords.x);
@@ -99,7 +103,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(2, 1))).thenReturn(false);
 
-        tankPlayer.move(Action.MoveEast);
+        new MoveRightCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -115,7 +119,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveSouth);
+        new MoveDownCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -131,7 +135,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(1, 0))).thenReturn(false);
 
-        tankPlayer.move(Action.MoveSouth);
+        new MoveDownCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);
@@ -147,7 +151,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(true);
 
-        tankPlayer.move(Action.MoveWest);
+        new MoveLeftCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(0, destinationCoords.x);
@@ -163,7 +167,7 @@ class TankTest {
         Tank tankPlayer = new Tank(new GridPoint2(1, 1), moveStrategy);
         when(moveStrategy.canMove(tankPlayer, new GridPoint2(0, 1))).thenReturn(false);
 
-        tankPlayer.move(Action.MoveWest);
+        new MoveLeftCommand(tankPlayer).exec();
         GridPoint2 destinationCoords = tankPlayer.getDestinationCoordinates();
 
         assertEquals(1, destinationCoords.x);

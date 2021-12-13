@@ -3,7 +3,6 @@ package ru.mipt.bit.platformer.util.levels;
 import com.badlogic.gdx.math.GridPoint2;
 import org.junit.jupiter.api.Test;
 import ru.mipt.bit.platformer.util.RenderableObjectWithCoordinates;
-import ru.mipt.bit.platformer.util.players.Action;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,9 +31,9 @@ class LevelTest {
                 List.of()
         );
 
-        assertNotNull(level.getRepository().getObject(new GridPoint2(1, 1)));
-        assertNotNull(level.getRepository().getObject(new GridPoint2(2, 3)));
-        assertNull(level.getRepository().getObject(new GridPoint2(3, 4)));
+        assertNotNull(level.getObject(new GridPoint2(1, 1)));
+        assertNotNull(level.getObject(new GridPoint2(2, 3)));
+        assertNull(level.getObject(new GridPoint2(3, 4)));
     }
 
     @Test
@@ -44,9 +43,9 @@ class LevelTest {
                 new GridPoint2(2, 3)
         ));
 
-        assertNotNull(level.getRepository().getObject(new GridPoint2(1, 1)));
-        assertNotNull(level.getRepository().getObject(new GridPoint2(2, 3)));
-        assertNull(level.getRepository().getObject(new GridPoint2(3, 4)));
+        assertNotNull(level.getObject(new GridPoint2(1, 1)));
+        assertNotNull(level.getObject(new GridPoint2(2, 3)));
+        assertNull(level.getObject(new GridPoint2(3, 4)));
     }
 
     @Test
@@ -61,8 +60,7 @@ class LevelTest {
                 )
         );
 
-        Collection<? extends RenderableObjectWithCoordinates> renderableObjects = level.getRepository()
-                .getRenderableObjects();
+        Collection<? extends RenderableObjectWithCoordinates> renderableObjects = level.getRenderableObjects();
 
         assertEquals(3, renderableObjects.size());
     }
@@ -71,6 +69,6 @@ class LevelTest {
     void testHasPlayer() {
         Level level = new Level(new GridPoint2(8, 10), new GridPoint2(1, 1));
 
-        assertNotNull(level.getRepository().getObject(new GridPoint2(1, 1)));
+        assertNotNull(level.getObject(new GridPoint2(1, 1)));
     }
 }

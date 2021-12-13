@@ -18,7 +18,7 @@ class SimpleRandomGeneratorTest {
         int counter = 0;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 8; j++) {
-                if (level.getRepository().getObject(new GridPoint2(i, j)) != null) {
+                if (level.getObject(new GridPoint2(i, j)) != null) {
                     ++counter;
                 }
             }

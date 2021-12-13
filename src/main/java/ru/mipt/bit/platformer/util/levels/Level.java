@@ -1,34 +1,32 @@
 package ru.mipt.bit.platformer.util.levels;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.HasLives;
+import ru.mipt.bit.platformer.util.*;
 import ru.mipt.bit.platformer.ObjectFactory;
-import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
-import ru.mipt.bit.platformer.util.events.CollisionEvent;
 import ru.mipt.bit.platformer.util.events.CreateEvent;
 import ru.mipt.bit.platformer.util.events.ObjectEventManager;
-import ru.mipt.bit.platformer.util.control.ActionProcessor;
 import ru.mipt.bit.platformer.util.events.RemoveEvent;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
+import ru.mipt.bit.platformer.util.obstacles.Tree;
 import ru.mipt.bit.platformer.util.players.Tank;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Адаптер в системе портов и адаптеров
  * Domain layer
  */
 public class Level {
-    private final ObjectsRepository repository;
-
     private final GridPoint2 bounds;
 
-    private final List<Bullet> bulletsToDelete = new ArrayList<>();
+    private final Map<UUID, Tank> enemies = new HashMap<>();
 
-    private final List<Tank> tanksToDelete = new ArrayList<>();
+    private Tank player;
+
+    private final Map<UUID, Bullet> bullets = new HashMap<>();
+
+    private final Map<GridPoint2, AbstractObjectWithCoordinates> obstacles = new HashMap<>();
 
     public Level(GridPoint2 bounds, GridPoint2 playerStartPosition) {
         this(bounds, playerStartPosition, List.of(), List.of());
@@ -40,43 +38,17 @@ public class Level {
             Collection<GridPoint2> obstacles,
             Collection<GridPoint2> enemies
     ) {
-        repository = new ObjectsRepository();
-
         this.bounds = bounds;
 
-        repository.setPlayer(ObjectFactory.createPlayer(playerStartPosition));
-        repository.addObstacles(obstacles);
-        repository.addEnemies(enemies);
+        player = ObjectFactory.createPlayer(playerStartPosition);
 
-        UUID uuid = UUID.randomUUID();
+        this.obstacles.putAll(obstacles.stream()
+                .map(Tree::new)
+                .collect(Collectors.toMap(Tree::getCoordinates, tree -> tree)));
 
-        ObjectEventManager.subscribe(
-            uuid,
-            ObjectEventManager.getEventName(Bullet.class, CollisionEvent.class),
-            event -> processBulletCollision((CollisionEvent) event)
-        );
-
-        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Bullet.class, RemoveEvent.class), event -> {
-            RemoveEvent removeEvent = (RemoveEvent) event;
-
-            bulletsToDelete.add((Bullet) removeEvent.getObject());
-        });
-
-        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Tank.class, RemoveEvent.class), event -> {
-            RemoveEvent removeEvent = (RemoveEvent) event;
-
-            tanksToDelete.add((Tank) removeEvent.getObject());
-        });
-
-        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Bullet.class, CreateEvent.class), event -> {
-            CreateEvent createEvent = (CreateEvent) event;
-
-            repository.addBullet((Bullet) createEvent.getObject());
-        });
-    }
-
-    public Tank getPlayer() {
-        return repository.getPlayer();
+        this.enemies.putAll(enemies.stream()
+                .map(ObjectFactory::createEnemy)
+                .collect(Collectors.toMap(Tank::getId, value -> value)));
     }
 
     public int getWidth() {
@@ -87,81 +59,128 @@ public class Level {
         return bounds.y;
     }
 
-    public ObjectsRepository getRepository() {
-        return repository;
+    public Tank getPlayer() {
+        return player;
     }
 
-    private void processPlayerMove(float deltaTime, float speed) {
-        Tank player = repository.getPlayer();
-        if (player != null) {
-            player.processOneTick(deltaTime, speed);
-        }
+    public Collection<Tank> getEnemies() {
+        return enemies.values();
     }
 
-    private void processEnemiesMove(float deltaTime, float speed) {
-        for (Tank enemy : repository.getEnemies()) {
-            enemy.processOneTick(deltaTime, speed);
-        }
+    public Collection<AbstractObjectWithCoordinates> getObstacles() {
+        return obstacles.values();
     }
 
-    private void processBulletsMove(float deltaTime, float speed) {
-        for (Bullet bullet : repository.getBullets()) {
-            bullet.processOneTick(deltaTime, speed);
-        }
+    public Map<UUID, Bullet> getBullets() {
+        return this.bullets;
     }
 
-    private void removeDeletedObjects() {
-        for (Bullet bullet : bulletsToDelete) {
-            repository.removeBullet(bullet);
+    public Tank getPlayerByCoords(GridPoint2 point) {
+        Tank enemy = getEnemyByCoords(point);
+
+        if (enemy == null) {
+            return player.getCoordinates().equals(point) ? player : null;
         }
 
-        for (Tank tank : tanksToDelete) {
-            if (repository.hasEnemy(tank)) {
-                repository.removeEnemy(tank);
-            } else {
-                repository.removePlayer();
+        return enemy;
+    }
+
+    public AbstractObjectWithCoordinates getObject(GridPoint2 point) {
+        if (obstacles.containsKey(point)) {
+            return obstacles.get(point);
+        }
+
+        Tank enemy = getEnemyByCoords(point);
+        if (enemy != null) {
+            return enemy;
+        }
+
+        if (player != null && point.equals(player.getCoordinates())) {
+            return player;
+        }
+
+        return null;
+    }
+
+    public AbstractMovable getObjectByDestination(GridPoint2 point) {
+        for (Tank tank : getEnemies()) {
+            if (tank.getDestinationCoordinates().equals(point)) {
+                return tank;
             }
         }
+
+        for (Bullet bullet : bullets.values()) {
+            if (bullet.getDestinationCoordinates().equals(point)) {
+                return bullet;
+            }
+        }
+
+        if (player.getDestinationCoordinates().equals(point)) {
+            return player;
+        }
+
+        return null;
     }
 
-    public void processOneTick(float deltaTime, float speed) {
-        processPlayerMove(deltaTime, speed);
-        processEnemiesMove(deltaTime, speed);
-        processBulletsMove(deltaTime, speed);
+    public ArrayList<RenderableObjectWithCoordinates> getRenderableObjects() {
+        ArrayList<RenderableObjectWithCoordinates> result = new ArrayList<>();
 
-        removeDeletedObjects();
+        result.add(player);
+        result.addAll(obstacles.values());
+        result.addAll(enemies.values());
+
+        return result;
+    }
+
+    public boolean hasEnemy(Tank tank) {
+        return enemies.containsKey(tank.getId());
+    }
+
+    public void addBullet(Bullet bullet) {
+        bullets.put(bullet.getId(), bullet);
     }
 
     public void processActions() {
-        for (Tank enemy : repository.getEnemies()) {
-            ActionProcessor.processAction(enemy);
+        for (Tank enemy : enemies.values()) {
+            enemy.getActionGenerator().getRecommendation(enemy).exec();
         }
 
-        ActionProcessor.processAction(repository.getPlayer());
+        player.getActionGenerator().getRecommendation(player).exec();
     }
 
-    private boolean canBeDeletedByBullet(AbstractObjectWithCoordinates object) {
-        return object instanceof Tank || object instanceof Bullet;
+    public void subscribeToAllEvents() {
+        UUID uuid = UUID.randomUUID();
+
+        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Bullet.class, RemoveEvent.class), event -> {
+            RemoveEvent removeEvent = (RemoveEvent) event;
+
+            bullets.remove(removeEvent.getObject().getId());
+        });
+
+        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Tank.class, RemoveEvent.class), event -> {
+            RemoveEvent removeEvent = (RemoveEvent) event;
+
+            if (hasEnemy((Tank) removeEvent.getObject())) {
+                enemies.remove(removeEvent.getObject().getId());
+            } else {
+                System.out.println("Game over!!!");
+            }
+        });
+
+        ObjectEventManager.subscribe(uuid, ObjectEventManager.getEventName(Bullet.class, CreateEvent.class), event -> {
+            CreateEvent createEvent = (CreateEvent) event;
+
+            addBullet((Bullet) createEvent.getObject());
+        });
     }
 
-    private void processBulletCollision(CollisionEvent collisionEvent) {
-        ObjectEventManager.notifyEvent(Bullet.class, new RemoveEvent(collisionEvent.getObject()));
-
-        if (collisionEvent.getDestinationObject() == null) {
-            return;
-        }
-
-        if (canBeDeletedByBullet(collisionEvent.getDestinationObject())) {
-            if (collisionEvent.getDestinationObject() instanceof HasLives) {
-                HasLives hasLives = (HasLives) collisionEvent.getDestinationObject();
-
-                if (hasLives.processDamage()) {
-                    ObjectEventManager.notifyEvent(
-                            collisionEvent.getDestinationObject().getClass(),
-                            new RemoveEvent(collisionEvent.getDestinationObject())
-                    );
-                }
+    private Tank getEnemyByCoords(GridPoint2 point) {
+        for (Tank enemy : enemies.values()) {
+            if (point.equals(enemy.getCoordinates())) {
+                return enemy;
             }
         }
+
+        return null;
     }
 }

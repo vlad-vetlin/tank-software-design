@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.util.control;
 
 import ru.mipt.bit.platformer.util.AbstractMovable;
+import ru.mipt.bit.platformer.util.actions.ActionCommand;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.players.Action;
 
 /**
  * Port в системе портов и адаптеров
@@ -10,7 +10,7 @@ import ru.mipt.bit.platformer.util.players.Action;
  */
 public final class MoveForwardActionGenerator implements ActionGenerator {
     @Override
-    public Action getRecommendation(AbstractMovable movable) {
+    public ActionCommand getRecommendation(AbstractMovable movable) {
         return movable.getActionByRotation(movable.getRotation());
     }
 

@@ -23,7 +23,7 @@ public class LevelGraphicProcessor {
 
         objects = new HashMap<>();
 
-        List<RenderableObjectWithCoordinates> renderableObjects = level.getRepository().getRenderableObjects();
+        List<RenderableObjectWithCoordinates> renderableObjects = level.getRenderableObjects();
         for (RenderableObjectWithCoordinates objectWithCoordinates : renderableObjects) {
             objects.put(objectWithCoordinates.getId(), objectWithCoordinates);
         }

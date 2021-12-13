@@ -1,17 +1,13 @@
 package ru.mipt.bit.platformer.util.players.moveStrategies;
 
 import com.badlogic.gdx.math.GridPoint2;
-import ru.mipt.bit.platformer.HasLives;
 import ru.mipt.bit.platformer.util.AbstractMovable;
 import ru.mipt.bit.platformer.util.AbstractObjectWithCoordinates;
-import ru.mipt.bit.platformer.util.Movable;
 import ru.mipt.bit.platformer.util.events.CollisionEvent;
 import ru.mipt.bit.platformer.util.events.ObjectEventManager;
 import ru.mipt.bit.platformer.util.levels.DoublePoint;
 import ru.mipt.bit.platformer.util.levels.Level;
-import ru.mipt.bit.platformer.util.levels.ObjectsRepository;
 import ru.mipt.bit.platformer.util.obstacles.Bullet;
-import ru.mipt.bit.platformer.util.players.Tank;
 
 /**
  * Adapter в системе портов и адаптеров
@@ -45,13 +41,13 @@ public class BulletMoveStrategy implements MoveStrategy {
     }
 
     private boolean checkPoint(AbstractMovable movable, GridPoint2 destination) {
-        AbstractObjectWithCoordinates object = level.getRepository().getObject(destination);
+        AbstractObjectWithCoordinates object = level.getObject(destination);
         if (object != null && checkIsCollision(movable, object)) {
             ObjectEventManager.notifyEvent(movable.getClass(), new CollisionEvent(movable, object));
             return true;
         }
 
-        object = level.getRepository().getObjectByDestination(destination);
+        object = level.getObjectByDestination(destination);
         if (object != null && checkIsCollision(movable, object)) {
             ObjectEventManager.notifyEvent(movable.getClass(), new CollisionEvent(movable, object));
             return true;

@@ -29,8 +29,8 @@ public final class SimpleMoveStrategy implements MoveStrategy {
         int distance = Math.abs(destination.x - movable.getCoordinates().x) +
                 Math.abs(destination.y - movable.getCoordinates().y);
         return distance == 1 &&
-               level.getRepository().getObject(destination) == null &&
-               level.getRepository().getObjectByDestination(destination) == null;
+               level.getObject(destination) == null &&
+               level.getObjectByDestination(destination) == null;
     }
 
     @Override

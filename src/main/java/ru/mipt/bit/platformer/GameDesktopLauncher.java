@@ -7,6 +7,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.util.Engine;
+import ru.mipt.bit.platformer.util.SimpleEngine;
 import ru.mipt.bit.platformer.util.generators.LevelGenerator;
 import ru.mipt.bit.platformer.util.generators.SimpleRandomGenerator;
 import ru.mipt.bit.platformer.util.levels.Level;
@@ -29,6 +31,7 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private LevelGraphicProcessor currentLevelGraphics;
 
+    private Engine engine;
 
     @Override
     public void create() {
@@ -45,6 +48,9 @@ public class GameDesktopLauncher implements ApplicationListener {
 //        LevelGenerator generator = new FileGenerator("src/main/resources/levels/testLevel");
 
         level = generator.createLevel();
+        engine = new SimpleEngine(level);
+        engine.subscribeToAllEvents();
+        level.subscribeToAllEvents();
         Settings.setLevelToMoveStrategies(level);
         currentLevelGraphics = new LevelGraphicProcessor(levelView, level);
     }
@@ -63,7 +69,8 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        level.processOneTick(deltaTime, MOVEMENT_SPEED);
+
+        engine.processOneTick(deltaTime, MOVEMENT_SPEED);
 
         // Processing of new commands should be after processing tick. Because we need to check collisions before
         // calling new movements
